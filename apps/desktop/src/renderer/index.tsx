@@ -37,4 +37,20 @@ void (isRecordingPreview
     'renderer/entry',
     `renderer entry load failed: ${error instanceof Error ? error.message : String(error)}`,
   );
+  // Dev : Vite peut ré-optimiser ses dépendances pendant le premier chargement,
+  // l'import échoue alors et la page resterait noire. On recharge, au plus
+  // 5 fois en 2 minutes pour ne jamais boucler.
+  if (import.meta.env.DEV) {
+    try {
+      const key = 'jarvis.devEntryReloads';
+      const now = Date.now();
+      const recent = (JSON.parse(sessionStorage.getItem(key) || '[]') as number[]).filter((t) => now - t < 120_000);
+      if (recent.length < 5) {
+        sessionStorage.setItem(key, JSON.stringify([...recent, now]));
+        setTimeout(() => window.location.reload(), 2000);
+      }
+    } catch {
+      // sessionStorage indisponible : pas de rechargement automatique.
+    }
+  }
 });

@@ -5,6 +5,7 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { MainEntryRedirect } from '@/components/layout/MainEntryRedirect';
 import { RouteErrorFallback } from '@/components/error/RouteErrorFallback';
 import { SidebarWindowLayout } from '@/components/layout/SidebarWindowLayout';
+import { JarvisRoute } from '@/features/jarvis/JarvisRoute';
 import { SettingsView } from '@/components/settings/SettingsView';
 import { LoginPage } from '@/components/login/LoginPage';
 import { AddAccountLoginPage } from '@/components/login/AddAccountLoginPage';
@@ -81,6 +82,12 @@ export const router = createHashRouter([
           {
             path: 'sidebar-window',
             element: <SidebarWindowLayout />,
+            errorElement: <RouteErrorFallback variant="section" />,
+          },
+          // Jarvis : interface plein écran (orbe), hors du shell MainLayout.
+          {
+            path: 'jarvis',
+            element: <JarvisRoute />,
             errorElement: <RouteErrorFallback variant="section" />,
           },
           {

@@ -5,8 +5,14 @@ import { MainViewHistoryContext } from '@/contexts/MainViewHistoryContext';
 import { mainEntryRouteForPath, readMainEntryRoute, rememberMainEntry } from '@/lib/mainEntryPreference';
 
 /** Only the unqualified home route restores; explicit routes always win. */
+// Jarvis : l'orbe remplace l'interface classique (tâches, bots…). Seuls les
+// Paramètres restent accessibles ; leur bouton retour ramène ici, donc à Jarvis.
+// JARVIS_CLOUD=1 (posé pour les tests) restaure l'accueil d'origine.
+const JARVIS_HOME = (import.meta.env as Record<string, string | undefined>).JARVIS_CLOUD !== '1';
+
 export function MainEntryRedirect() {
   const { dataOwnerId } = useAuth();
+  if (JARVIS_HOME) return <Navigate to="/jarvis" replace />;
   return <Navigate to={readMainEntryRoute(dataOwnerId)} replace />;
 }
 
