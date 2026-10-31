@@ -83,6 +83,7 @@ import {
   captureCindyVersionOriginEndpoints,
   getCindyVersionEndpointOverride,
 } from './cindy-make/versionRuntimeIdentity.js';
+import { buildJarvisOfflineManifestText, isJarvisOffline } from './jarvisOffline';
 
 const log = createLogger('clientEndpoints');
 
@@ -993,9 +994,12 @@ function getLogDirSafe(): string | null {
 export async function initClientEndpoints(): Promise<boolean> {
   // A verified Make profile carries the original Dev's public service configuration.
   // Ordinary packaged apps still use CDN; ambient file/env overrides cannot enable this path.
-  const versionSnapshot = getCindyVersionEndpointOverride();
+  const jarvisOffline = isJarvisOffline();
+  const versionSnapshot = jarvisOffline
+    ? { manifestText: buildJarvisOfflineManifestText(BUILD_AUTH_REGION), local: true }
+    : getCindyVersionEndpointOverride();
   const source: EndpointSource = versionSnapshot
-    ? { kind: 'file', filePath: 'Cindy Make' }
+    ? { kind: 'file', filePath: jarvisOffline ? 'Jarvis offline' : 'Cindy Make' }
     : resolveEndpointSource({
         isPackaged: app.isPackaged,
         env: {

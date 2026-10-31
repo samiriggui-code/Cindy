@@ -101,6 +101,7 @@ import {
 import { resolveLoginScenarioFetch } from '@cindy/auth-client/fixtures';
 
 import { createLogger } from './logger';
+import { isJarvisOffline } from './jarvisOffline';
 import { requestErrorMessage } from './requestErrorMessage';
 import { AuthOwnerChangeShellGate } from './authOwnerChangeShellGate';
 import {
@@ -4335,6 +4336,8 @@ export async function enterLocalMode(): Promise<AuthState> {
 /** Leave local mode without deleting its owner-scoped data. */
 export async function exitLocalMode(): Promise<AuthState> {
   if (getActiveAppSession().mode !== 'local') return snapshotAuthState();
+  // Jarvis offline: no account server to sign in to, stay local.
+  if (isJarvisOffline()) return snapshotAuthState();
   await withAccountFreeOwnerCommit({
     reason: 'exit-local-mode',
     nextMode: 'signed-out',

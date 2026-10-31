@@ -20,6 +20,7 @@ import { app } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { isJarvisOffline } from './jarvisOffline.js';
 import { desktopMakerLogger } from './maker-host/logger-adapter.js';
 import {
   createOverrideSettingsFile,
@@ -252,6 +253,7 @@ let buildGateLogged = false;
  * (fail closed,宁可少报不可乱报)。
  */
 function isReportingBuild(): boolean {
+  if (isJarvisOffline()) return false;
   if (app.isPackaged === true) return true;
   const devOptIn = process.env[DEV_REPORTING_ENV] === '1';
   if (!buildGateLogged) {

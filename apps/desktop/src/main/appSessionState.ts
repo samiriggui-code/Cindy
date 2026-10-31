@@ -14,6 +14,7 @@ import { createLogger } from './logger.js';
 import { createOverrideSettingsFile } from './maker-host/override-settings-file.js';
 import { LOCAL_PROFILE_DATA_OWNER_ID } from './profile/profileRegistryModel.js';
 import type { DataOwnerPushStamp } from '../shared/dataOwnerPush.js';
+import { isJarvisOffline } from './jarvisOffline.js';
 
 export type AppSessionMode = 'signed-out' | 'local' | 'cloud';
 
@@ -108,7 +109,9 @@ function ensureLoaded(): ActiveAppSession {
   const persistedMode = store.read().activeMode;
   // Cloud is only an intent at process start. It becomes an active session
   // after auth verifies the persisted refresh token and supplies its owner.
-  const initialMode: AppSessionMode = persistedMode === 'local' ? 'local' : 'signed-out';
+  // Jarvis offline: there is no account server, so every launch is local.
+  const initialMode: AppSessionMode =
+    persistedMode === 'local' || isJarvisOffline() ? 'local' : 'signed-out';
   active = {
     mode: initialMode,
     dataOwnerId: initialMode === 'local' ? LOCAL_DATA_OWNER_ID : null,

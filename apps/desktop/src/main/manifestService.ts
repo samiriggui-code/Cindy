@@ -21,6 +21,7 @@ import { resolveUpdateChannel, type UpdateChannel } from '@cindy/maker-shared/up
 
 import { supportsBetaUpdateChannel } from '../shared/updateChannelCapability';
 import { createLogger } from './logger';
+import { isJarvisOffline } from './jarvisOffline';
 import { getClientEndpoint } from './clientEndpointsService';
 import { isBetaChannelEnabled } from './updateChannelStore';
 import { parseAppUpdateVersion } from './updateVersionPolicy';
@@ -174,6 +175,7 @@ export async function fetchManifest(
   signal?: AbortSignal,
 ): Promise<Manifest | null> {
   if (isDev()) return null;
+  if (isJarvisOffline() || !getBaseUrl()) return null;
   if (signal?.aborted) return null;
 
   const channel = currentUpdateChannel();

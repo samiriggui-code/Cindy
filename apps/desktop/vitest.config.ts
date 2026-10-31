@@ -98,6 +98,9 @@ export default defineConfig({
     // Main-process code is pure Node — no DOM needed. Renderer tests (if/when
     // added) should switch to 'jsdom' via per-file `// @vitest-environment`.
     environment: 'node',
+    // Upstream suites assert the cloud behaviour; Jarvis offline mode has its
+    // own tests that unset this explicitly (see main/jarvisOffline.ts).
+    env: { JARVIS_CLOUD: '1' },
     // Keep include arrays project-local: Vitest merges array options inherited
     // through extends:true, so a root include would make the resource project
     // collect standard tests too. The two projects remain mutually exclusive.
