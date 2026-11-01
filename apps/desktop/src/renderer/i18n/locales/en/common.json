@@ -4212,12 +4212,6 @@
         "lighterAlternative": "Lighter alternative",
         "recommendedInstalled": "Recommended models are already on this computer."
       },
-      "xdSignin": {
-        "badge": "Recommended",
-        "desc": "The official service — all models work out of the box, no keys to manage.",
-        "grantBadge": "Promotional balance for new users",
-        "cta": "Sign in to Cindy"
-      },
       "menu": {
         "disableProvider": "Disable This Provider",
         "enableProvider": "Enable This Provider"

@@ -4254,12 +4254,6 @@
         "lighterAlternative": "Alternative plus légère",
         "recommendedInstalled": "Les modèles recommandés sont déjà sur cet ordinateur."
       },
-      "xdSignin": {
-        "badge": "Recommandé",
-        "desc": "Le service officiel : tous les modèles fonctionnent immédiatement, aucune clé à gérer.",
-        "grantBadge": "Solde promotionnel pour les nouveaux utilisateurs",
-        "cta": "Se connecter à Cindy"
-      },
       "menu": {
         "disableProvider": "Désactiver ce fournisseur",
         "enableProvider": "Activer ce fournisseur"
