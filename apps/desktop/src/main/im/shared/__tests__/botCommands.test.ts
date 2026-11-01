@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import en from '../../../../renderer/i18n/locales/en/common.json';
-import ja from '../../../../renderer/i18n/locales/ja/common.json';
-import ko from '../../../../renderer/i18n/locales/ko/common.json';
-import zhCN from '../../../../renderer/i18n/locales/zh-CN/common.json';
-import zhTW from '../../../../renderer/i18n/locales/zh-TW/common.json';
+import fr from '../../../../renderer/i18n/locales/fr/common.json';
 
 import {
   BOT_COMMANDS,
@@ -53,18 +50,9 @@ const OFFICIAL_SERVER_COMMANDS = [
 
 describe('bot command registry', () => {
   it('Telegram /new menu copy says it creates a session/task in every locale', () => {
-    expect([
-      en.settings.telegramBot.commandMenu.new,
-      zhCN.settings.telegramBot.commandMenu.new,
-      zhTW.settings.telegramBot.commandMenu.new,
-      ja.settings.telegramBot.commandMenu.new,
-      ko.settings.telegramBot.commandMenu.new,
-    ]).toEqual([
+    expect([en.settings.telegramBot.commandMenu.new, fr.settings.telegramBot.commandMenu.new]).toEqual([
       'Create a new session',
-      '创建新任务',
-      '建立新任務',
-      '新しいセッションを作成',
-      '새 세션 만들기',
+      'Créer une nouvelle session',
     ]);
   });
 
@@ -171,20 +159,20 @@ describe('bot command registry', () => {
     expect(missing).toEqual([]);
   });
 
-  it('官方菜单: 默认英文 + zh / ja / ko 各一份, 命令集合即官方子集、顺序即表序', () => {
+  it('官方菜单: 默认英文 + fr 一份, 命令集合即官方子集、顺序即表序', () => {
     const calls: Array<[string, string]> = [];
     const menus = buildOfficialBotCommandMenus((key, locale) => {
       calls.push([key, locale]);
       return `${locale}:${key.split('.').pop()}`;
     });
-    expect(menus.map((m) => m.languageCode)).toEqual([null, 'zh', 'ja', 'ko']);
+    expect(menus.map((m) => m.languageCode)).toEqual([null, 'fr']);
     for (const menu of menus) {
       expect(menu.commands.map((c) => c.command)).toEqual(
         OFFICIAL_BOT_COMMANDS.map((definition) => definition.command),
       );
     }
-    expect(menus[1].commands.find((c) => c.command === 'effort')?.description).toBe('zh-CN:effort');
-    expect(new Set(calls.map(([, locale]) => locale))).toEqual(new Set(['en', 'zh-CN', 'ja', 'ko']));
+    expect(menus[1].commands.find((c) => c.command === 'effort')?.description).toBe('fr:effort');
+    expect(new Set(calls.map(([, locale]) => locale))).toEqual(new Set(['en', 'fr']));
   });
 
   it('官方镜像与服务端 TELEGRAM_COMMANDS 一一对应', () => {

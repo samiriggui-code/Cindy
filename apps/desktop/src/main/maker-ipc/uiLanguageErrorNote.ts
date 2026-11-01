@@ -1,11 +1,8 @@
 import { SUPPORTED_LOCALES, type SupportedLocale } from '../../shared/locale.js';
 
 const INTERFACE_LANGUAGE_NAME: Record<SupportedLocale, string> = {
-  'zh-CN': '简体中文',
-  'zh-TW': '繁體中文',
   en: 'English',
-  ja: '日本語',
-  ko: '한국어',
+  fr: 'Français',
 };
 
 export function isSupportedUiLanguage(value: unknown): value is SupportedLocale {

@@ -4,7 +4,7 @@ import { cleanup, fireEvent, render, screen, within } from '@testing-library/rea
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SidebarFilterPopover } from '../SidebarFilterPopover';
 import type { UseSidebarFilterReturn } from '../../hooks/useSidebarFilter';
-import translations from '@/i18n/locales/zh-CN/common.json';
+import translations from '@/i18n/locales/fr/common.json';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -109,8 +109,8 @@ describe('sidebar display settings menu', () => {
     expect(enumerate).not.toHaveBeenCalled();
     rerender(<SidebarFilterPopover filter={filter} allKnownProjects={projects} open />);
     expect(enumerate).toHaveBeenCalled();
-    const submenu = await openSubmenu(/^任务排序/);
-    fireEvent.click(within(submenu).getByRole('menuitem', { name: '创建时间' }));
+    const submenu = await openSubmenu(/^Tri de session/);
+    fireEvent.click(within(submenu).getByRole('menuitem', { name: 'Temps de création' }));
     expect(filter.setSortBy).toHaveBeenCalledWith('created');
   });
 
@@ -120,19 +120,19 @@ describe('sidebar display settings menu', () => {
     const root = screen.getByRole('menu');
     const rows = within(root).getAllByRole('menuitem');
     expect(rows.map((row) => row.querySelector('span')?.textContent)).toEqual([
-      '分组',
-      '任务排序',
-      '项目排序',
-      '任务状态',
-      '筛选',
-      '显示',
-      '任务信息',
+      'Regrouper par',
+      'Tri de session',
+      'Tri des projets',
+      'Statut de la session',
+      'Filtres',
+      'Affichage',
+      'Informations sur la séance',
     ]);
     for (const row of rows) expect(row.querySelector('svg')).not.toBeNull();
     expect(rows[3].querySelector('.lucide-list-checks')).not.toBeNull();
-    expect(rows[0].textContent).toContain('项目、对话、设备');
-    expect(rows[2].textContent).toContain('跟随任务');
-    const submenu = await openSubmenu(/^任务排序/);
+    expect(rows[0].textContent).toContain('Projet, Discuter, Appareil');
+    expect(rows[2].textContent).toContain('Suivre les séances');
+    const submenu = await openSubmenu(/^Tri de session/);
     // PR #6196: preserve the historical glass-menu clipping regression through
     // real unit DOM containment; content/click assertions alone miss a lost portal.
     expect(root.contains(submenu)).toBe(false);
@@ -141,15 +141,15 @@ describe('sidebar display settings menu', () => {
       within(submenu)
         .getAllByRole('menuitem')
         .map((row) => row.textContent),
-    ).toEqual(['优先级', '最近活动', '创建时间']);
-    fireEvent.click(within(submenu).getByRole('menuitem', { name: '创建时间' }));
+    ).toEqual(['Priorité', 'Activité récente', 'Temps de création']);
+    fireEvent.click(within(submenu).getByRole('menuitem', { name: 'Temps de création' }));
     expect(filter.setSortBy).toHaveBeenCalledWith('created');
     expect(screen.getAllByRole('menu')).toHaveLength(2);
-    expect(within(submenu).getByRole('menuitem', { name: '创建时间' })).not.toBeNull();
-    const statusMenu = await openSubmenu(/^任务状态/);
+    expect(within(submenu).getByRole('menuitem', { name: 'Temps de création' })).not.toBeNull();
+    const statusMenu = await openSubmenu(/^Statut de la session/);
     expect(
       within(statusMenu)
-        .getByRole('menuitem', { name: '活跃' })
+        .getByRole('menuitem', { name: 'Actif' })
         .querySelector('.lucide-circle-dot'),
     ).not.toBeNull();
   });
@@ -157,17 +157,17 @@ describe('sidebar display settings menu', () => {
   it('keeps status independent from content filters and exposes a selectable Pi harness', async () => {
     const filter = makeFilter({ status: 'archived' });
     render(<Preview filter={filter} />);
-    const submenu = await openSubmenu(/^筛选/);
-    expect(within(submenu).queryByText('任务状态')).toBeNull();
+    const submenu = await openSubmenu(/^Filtres/);
+    expect(within(submenu).queryByText('Statut de la session')).toBeNull();
     expect(
-      within(submenu).getByRole('menuitem', { name: '重置筛选' }).getAttribute('data-disabled'),
+      within(submenu).getByRole('menuitem', { name: 'Réinitialiser les filtres' }).getAttribute('data-disabled'),
     ).not.toBeNull();
-    const harness = await openSubmenu(/^Harness/);
+    const harness = await openSubmenu(/^Harnais/);
     expect(
       within(harness)
         .getAllByRole('menuitem')
         .map((row) => row.textContent),
-    ).toEqual(['全部', 'Claude Code', 'Codex', 'Pi']);
+    ).toEqual(['Tout', 'Claude Code', 'Codex', 'Pi']);
     fireEvent.click(within(harness).getByRole('menuitem', { name: 'Pi' }));
     expect(filter.setVendor).toHaveBeenCalledWith('pi');
     expect(screen.getAllByRole('menu').length).toBeGreaterThan(1);
@@ -180,7 +180,7 @@ describe('sidebar display settings menu', () => {
       const { unmount } = render(
         <SidebarFilterPopover filter={makeFilter({ status })} allKnownProjects={[]} open={false} />,
       );
-      const trigger = screen.getByRole('button', { name: /^侧边栏显示设置/ });
+      const trigger = screen.getByRole('button', { name: /^Paramètres de la barre latérale/ });
       const found = trigger.querySelector('span[aria-hidden]') !== null;
       unmount();
       return found;
@@ -191,14 +191,14 @@ describe('sidebar display settings menu', () => {
   it('hides unavailable grouping choices and their summary without clearing saved device preference', async () => {
     const filter = makeFilter({ groupBy: 'flat' });
     render(<Preview filter={filter} remote={false} />);
-    expect(screen.queryByRole('menuitem', { name: /^项目排序/ })).toBeNull();
-    expect(screen.getByRole('menuitem', { name: /^分组/ }).textContent).toBe('分组对话');
-    const group = await openSubmenu(/^分组/);
+    expect(screen.queryByRole('menuitem', { name: /^Tri des projets/ })).toBeNull();
+    expect(screen.getByRole('menuitem', { name: /^Regrouper par/ }).textContent).toBe('Regrouper parDiscuter');
+    const group = await openSubmenu(/^Regrouper par/);
     expect(
       within(group)
         .getAllByRole('menuitem')
         .map((row) => row.textContent),
-    ).toEqual(['项目', '对话']);
+    ).toEqual(['Projet', 'Discuter']);
     expect(filter.groupDevice).toBe(true);
   });
 });
@@ -209,14 +209,14 @@ it('keeps the creator submenu open for multiple selections and exposes an all re
     { id: 'a', name: 'Dash', deviceId: 'remote', deviceName: 'Laptop', avatar: '', avatarColor: 'blue' },
   ] });
   render(<Preview filter={filter} />);
-  await openSubmenu(/^筛选/);
-  const submenu = await openSubmenu(/^伙伴/);
+  await openSubmenu(/^Filtres/);
+  const submenu = await openSubmenu(/^Coéquipiers/);
   expect(within(submenu).getByRole('menuitemcheckbox', { name: 'Dash' }).getAttribute('aria-checked')).toBe('true');
   fireEvent.click(within(submenu).getByRole('menuitemcheckbox', { name: 'Dash Laptop' }));
   expect(filter.toggleCreator).toHaveBeenCalledWith('["remote","a"]');
   expect(screen.getAllByRole('menu')).toHaveLength(3);
-  fireEvent.click(within(submenu).getByRole('menuitem', { name: '全部' }));
+  fireEvent.click(within(submenu).getByRole('menuitem', { name: 'Tout' }));
   expect(filter.setCreatorsAll).toHaveBeenCalledOnce();
-  fireEvent.click(within(submenu).getByRole('menuitem', { name: '都不显示' }));
+  fireEvent.click(within(submenu).getByRole('menuitem', { name: 'Tout cacher' }));
   expect(filter.setCreatorsNone).toHaveBeenCalledOnce();
 });

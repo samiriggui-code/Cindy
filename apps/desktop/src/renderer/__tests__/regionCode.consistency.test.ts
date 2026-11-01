@@ -23,19 +23,13 @@ import type { CindyRegion } from '@cindy/maker-shared/brand-identity';
 
 import { CINDY_REGION_CODE, shouldLabelRegion } from '../../shared/regionCode';
 import en from '../i18n/locales/en/common.json';
-import ja from '../i18n/locales/ja/common.json';
-import ko from '../i18n/locales/ko/common.json';
-import zhCN from '../i18n/locales/zh-CN/common.json';
-import zhTW from '../i18n/locales/zh-TW/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 
 type Bundle = Record<string, unknown>;
 
 const LOCALES: Record<string, Bundle> = {
-  'zh-CN': zhCN as Bundle,
-  'zh-TW': zhTW as Bundle,
   en: en as Bundle,
-  ja: ja as Bundle,
-  ko: ko as Bundle,
+  fr: fr as Bundle,
 };
 
 /** region → 多数链路的 i18n key 后缀(cn → regionCodeCn)。 */

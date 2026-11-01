@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import en from '../i18n/locales/en/common.json';
-import ja from '../i18n/locales/ja/common.json';
-import ko from '../i18n/locales/ko/common.json';
-import zhCN from '../i18n/locales/zh-CN/common.json';
-import zhTW from '../i18n/locales/zh-TW/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 import { extractIpcError, mapIpcErrorToI18nKey } from '../utils/ipcError';
 
 const codes = [
@@ -17,7 +14,7 @@ const codes = [
   'MODEL_WINDOW_PREPARATION_IN_PROGRESS',
 ] as const;
 
-const locales = { en, ja, ko, 'zh-CN': zhCN, 'zh-TW': zhTW } as const;
+const locales = { en, fr } as const;
 
 describe('model-window switch IPC errors', () => {
   it.each(codes)('decodes %s after Electron wraps the main-process error', (code) => {
@@ -48,14 +45,14 @@ describe('model-window switch IPC errors', () => {
         `${locale}:settings action`,
       ).toEqual(expect.any(String));
     }
-    expect(zhCN.ipcError.MODEL_WINDOW_CURRENT_CONTEXT_UNKNOWN).toBe(
-      '模型未切换：无法确认当前模型的上下文窗口。请检查自定义模型的窗口设置；若无法修改，请保留当前模型或新建任务',
+    expect(fr.ipcError.MODEL_WINDOW_CURRENT_CONTEXT_UNKNOWN).toBe(
+      "Modèle non changé : Cindy ne peut pas vérifier la fenêtre contextuelle du modèle actuel. Vérifiez le paramètre de fenêtre pour un modèle personnalisé. S'il ne peut pas être modifié, conservez le modèle actuel ou démarrez une nouvelle tâche.",
     );
     expect(en.ipcError.MODEL_WINDOW_TARGET_CONTEXT_UNKNOWN).toBe(
       'Model not switched: Cindy can’t verify the target model’s context window. Check the window setting for a custom model. If it can’t be changed, choose another model or start a new task.',
     );
-    expect(zhCN.ipcError.MODEL_WINDOW_REMOTE_REBUILD_UNSUPPORTED).toBe(
-      '模型未切换：远程任务无法为更小的上下文窗口安全整理上下文。请保留当前模型，或新建任务后选择目标模型',
+    expect(fr.ipcError.MODEL_WINDOW_REMOTE_REBUILD_UNSUPPORTED).toBe(
+      "Modèle non changé : cette tâche distante ne peut pas préparer son contexte en toute sécurité pour la fenêtre plus petite. Conservez le modèle actuel ou choisissez le modèle cible dans une nouvelle tâche.",
     );
   });
 });

@@ -17,16 +17,11 @@ import {
   type EndpointManifestDialogLocale,
 } from '../endpointManifestDialogCopy';
 
-const LOCALES: EndpointManifestDialogLocale[] = ['zh-CN', 'zh-TW', 'en', 'ja', 'ko'];
-
-/** CJK 与拉丁字母混排检测用:排除产品名、已裁决术语与占位符后仍有英文单词即视为混排。 */
-function stripAllowedLatin(text: string): string {
-  return text.replace(/\{\{\w+\}\}/g, ' ').replace(/Cindy|Proxy/g, ' ');
-}
+const LOCALES: EndpointManifestDialogLocale[] = ['fr', 'en'];
 
 describe('端点清单弹框文案', () => {
   it('全部语言 key 集合一致且无空值', () => {
-    const reference = Object.keys(ENDPOINT_MANIFEST_DIALOG_COPY['zh-CN']).sort();
+    const reference = Object.keys(ENDPOINT_MANIFEST_DIALOG_COPY.fr).sort();
     for (const locale of LOCALES) {
       const copy = ENDPOINT_MANIFEST_DIALOG_COPY[locale];
       expect(Object.keys(copy).sort(), `${locale} key 集合`).toEqual(reference);
@@ -44,23 +39,14 @@ describe('端点清单弹框文案', () => {
     }
   });
 
-  it('CJK 语言的文案不夹带英文句子(不再中英混排)', () => {
-    for (const locale of ['zh-CN', 'zh-TW', 'ja', 'ko'] as const) {
-      for (const [key, value] of Object.entries(ENDPOINT_MANIFEST_DIALOG_COPY[locale])) {
-        const leftover = stripAllowedLatin(value);
-        expect(/[A-Za-z]{3,}/.test(leftover), `${locale}.${key} 夹带英文:${value}`).toBe(false);
-      }
-    }
-  });
-
   it('网络失败 + 有缓存:复制诊断与离线出口都出现,choices 与 buttons 对齐', () => {
     const content = buildEndpointManifestDialogContent({
-      locale: 'zh-CN',
+      locale: 'fr',
       kind: 'network',
       reason: 'fetch-failed:ERR_CONNECTION_RESET',
       offlineSavedAt: '2026/7/29 06:22',
     });
-    const copy = ENDPOINT_MANIFEST_DIALOG_COPY['zh-CN'];
+    const copy = ENDPOINT_MANIFEST_DIALOG_COPY.fr;
     expect(content.buttons).toEqual([
       copy.retryButton,
       copy.copyDiagnosticsButton,
@@ -93,20 +79,20 @@ describe('端点清单弹框文案', () => {
 
   it('配置事故即使有缓存也不给离线出口', () => {
     const content = buildEndpointManifestDialogContent({
-      locale: 'zh-CN',
+      locale: 'fr',
       kind: 'config',
       reason: 'invalid-json',
       offlineSavedAt: '2026/7/29 06:22',
     });
     expect(content.choices).toEqual(['retry', 'copy-diagnostics', 'exit']);
-    expect(content.message).toBe(ENDPOINT_MANIFEST_DIALOG_COPY['zh-CN'].configTitle);
-    expect(content.detail).toContain(ENDPOINT_MANIFEST_DIALOG_COPY['zh-CN'].configBody);
+    expect(content.message).toBe(ENDPOINT_MANIFEST_DIALOG_COPY.fr.configTitle);
+    expect(content.detail).toContain(ENDPOINT_MANIFEST_DIALOG_COPY.fr.configBody);
     expect(content.detail).not.toContain('2026/7/29 06:22');
   });
 
   it('可见文案展示简短错误信息,不暴露来源、诊断或本机路径', () => {
     const content = buildEndpointManifestDialogContent({
-      locale: 'zh-CN',
+      locale: 'fr',
       kind: 'network',
       reason: 'fetch-failed:ERR_CONNECTION_RESET',
       source: 'https://cdn.example.com/endpoint.json',
@@ -115,8 +101,8 @@ describe('端点清单弹框文案', () => {
       offlineSavedAt: null,
     });
     expect(content.detail).not.toContain('{{');
-    expect(content.detail).toContain(ENDPOINT_MANIFEST_DIALOG_COPY['zh-CN'].networkBody);
-    expect(content.detail).toContain('错误信息：ERR_CONNECTION_RESET');
+    expect(content.detail).toContain(ENDPOINT_MANIFEST_DIALOG_COPY.fr.networkBody);
+    expect(content.detail).toContain('Erreur : ERR_CONNECTION_RESET');
     expect(content.detail).not.toContain('fetch-failed:');
     expect(content.detail).not.toContain('cdn.example.com');
     expect(content.detail).not.toContain('proxy=DIRECT');
@@ -146,14 +132,14 @@ describe('端点清单弹框文案', () => {
 
   it('复制失败时展示可见失败反馈,不误报为已复制', () => {
     const content = buildEndpointManifestDialogContent({
-      locale: 'zh-CN',
+      locale: 'fr',
       kind: 'network',
       reason: 'fetch-failed:ERR_CONNECTION_RESET',
       copyStatus: 'failed',
       offlineSavedAt: null,
     });
 
-    expect(content.detail).toContain(ENDPOINT_MANIFEST_DIALOG_COPY['zh-CN'].copyFailedHint);
-    expect(content.detail).not.toContain(ENDPOINT_MANIFEST_DIALOG_COPY['zh-CN'].copiedHint);
+    expect(content.detail).toContain(ENDPOINT_MANIFEST_DIALOG_COPY.fr.copyFailedHint);
+    expect(content.detail).not.toContain(ENDPOINT_MANIFEST_DIALOG_COPY.fr.copiedHint);
   });
 });

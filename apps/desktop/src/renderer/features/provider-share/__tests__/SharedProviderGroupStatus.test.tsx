@@ -5,15 +5,12 @@ import { I18nextProvider } from 'react-i18next';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import en from '@/i18n/locales/en/common.json';
-import ja from '@/i18n/locales/ja/common.json';
-import ko from '@/i18n/locales/ko/common.json';
-import zhCN from '@/i18n/locales/zh-CN/common.json';
-import zhTW from '@/i18n/locales/zh-TW/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 import { setDataOwnerGeneration } from '@/contexts/dataOwnerGeneration';
 
 import { SharedProviderGroupStatus } from '../SharedProviderGroupStatus';
 
-const catalogs = { en, ja, ko, 'zh-CN': zhCN, 'zh-TW': zhTW };
+const catalogs = { en, fr };
 const i18n = createInstance();
 const invoke = vi.fn();
 const payload = (states: unknown[] | null = ['available', 'needs-update']) => ({
@@ -31,7 +28,7 @@ beforeEach(async () => {
   setDataOwnerGeneration('test-owner', 0);
   Object.assign(window, { electronAPI: { deviceLink: { invoke } } });
   await i18n.init({
-    lng: 'zh-CN', fallbackLng: false, defaultNS: 'common',
+    lng: 'fr', fallbackLng: false, defaultNS: 'common',
     resources: Object.fromEntries(Object.entries(catalogs).map(([locale, common]) => [locale, { common }])),
     interpolation: { escapeValue: false },
   });
@@ -60,9 +57,9 @@ describe('received provider group status', () => {
   it('counts busy computers as usable and never renders injected identity or usage', async () => {
     invoke.mockResolvedValue(payload(['busy', { state: 'available', label: 'SECRET NAME', running: 777 }]));
     await act(async () => { render(element()); });
-    expect(screen.getByRole('status').textContent).toBe('2 台中有 1 台可接任务');
-    expect(screen.getByText('忙碌，仍可接任务')).toBeTruthy();
-    expect(screen.getByText('状态未知')).toBeTruthy();
+    expect(screen.getByRole('status').textContent).toBe('1 des 2 ordinateurs peuvent accepter des tâches');
+    expect(screen.getByText('Occupé, peut accepter des tâches')).toBeTruthy();
+    expect(screen.getByText('Statut inconnu')).toBeTruthy();
     expect(document.body.textContent).not.toMatch(/SECRET NAME|777/);
   });
 
@@ -70,21 +67,21 @@ describe('received provider group status', () => {
     await act(async () => { render(element()); });
     invoke.mockRejectedValueOnce(new Error('offline'));
     await act(async () => { await vi.advanceTimersByTimeAsync(15_000); });
-    expect(screen.getByText('电脑状态读取失败，请刷新重试')).toBeTruthy();
-    expect(screen.queryByText('可用')).toBeNull();
-    expect(screen.getAllByText('状态未知')).toHaveLength(2);
+    expect(screen.getByText("Impossible de lire l'état de l'ordinateur. Actualisez pour réessayer.")).toBeTruthy();
+    expect(screen.queryByText('Disponible')).toBeNull();
+    expect(screen.getAllByText('Statut inconnu')).toHaveLength(2);
     invoke.mockResolvedValue(payload(['cooling', 'paused']));
-    await act(async () => { fireEvent.click(screen.getByRole('button', { name: '刷新状态' })); });
-    expect(screen.getByText('目前没有可接任务的电脑，请联系分享者检查')).toBeTruthy();
-    expect(screen.getByText('冷却中，暂不接新任务')).toBeTruthy();
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Actualiser le statut' })); });
+    expect(screen.getByText('Aucun ordinateur ne peut accepter de tâches pour le moment. Demandez au partageur de vérifier.')).toBeTruthy();
+    expect(screen.getByText('Refroidissement, pas de nouvelles tâches')).toBeTruthy();
   });
 
   it('does not call an old host healthy or unavailable when it supplies no statuses', async () => {
     invoke.mockResolvedValue(payload(null));
     await act(async () => { render(element()); });
-    expect(screen.getByText(zhCN.providerShare.received.groupStatus.unsupported)).toBeTruthy();
-    expect(screen.queryByText('可用')).toBeNull();
-    expect(screen.queryByText(zhCN.providerShare.received.groupStatus.noneReady)).toBeNull();
+    expect(screen.getByText(fr.providerShare.received.groupStatus.unsupported)).toBeTruthy();
+    expect(screen.queryByText('Disponible')).toBeNull();
+    expect(screen.queryByText(fr.providerShare.received.groupStatus.noneReady)).toBeNull();
   });
 
   it('pauses in the background, refreshes when visible, and stops after closing', async () => {
@@ -110,8 +107,8 @@ describe('received provider group status', () => {
     invoke.mockResolvedValue(payload(['offline', 'paused']));
     await act(async () => { view.rerender(element('share:two')); });
     await act(async () => { resolveOld(payload(['available', 'available'])); });
-    expect(screen.queryByText('可用')).toBeNull();
-    expect(screen.getByText('离线或无法连接')).toBeTruthy();
+    expect(screen.queryByText('Disponible')).toBeNull();
+    expect(screen.getByText('Hors ligne ou inaccessible')).toBeTruthy();
   });
 
   it('discards an outdated owner snapshot and continues refreshing for the same owner', async () => {
@@ -120,9 +117,9 @@ describe('received provider group status', () => {
     render(element());
     setDataOwnerGeneration('test-owner', 1);
     await act(async () => { resolveOld(payload()); });
-    expect(screen.queryByText('可用')).toBeNull();
+    expect(screen.queryByText('Disponible')).toBeNull();
     invoke.mockResolvedValue(payload(['busy', 'paused']));
     await act(async () => { await vi.advanceTimersByTimeAsync(15_000); });
-    expect(screen.getByText('忙碌，仍可接任务')).toBeTruthy();
+    expect(screen.getByText('Occupé, peut accepter des tâches')).toBeTruthy();
   });
 });

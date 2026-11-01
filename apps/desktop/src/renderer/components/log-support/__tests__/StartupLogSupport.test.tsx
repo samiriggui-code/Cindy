@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import zhCN from '../../../i18n/locales/zh-CN/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 
 const mocks = vi.hoisted(() => ({
   auth: { canEnterApp: false, isInitializing: false, isAuthenticated: false, mode: 'signed-out' },
@@ -40,8 +40,8 @@ import { parseStartupGateStallSnapshot } from '../../../../shared/startupGateSta
 
 beforeAll(async () => {
   await i18next.use(initReactI18next).init({
-    lng: 'zh-CN',
-    resources: { 'zh-CN': { translation: zhCN } },
+    lng: 'fr',
+    resources: { 'fr': { translation: fr } },
     interpolation: { escapeValue: false },
   });
 });
@@ -88,14 +88,14 @@ afterEach(cleanup);
 
 function openSupport() {
   render(<StartupLogSupport />);
-  fireEvent.click(screen.getByRole('button', { name: zhCN.logSupport.title }));
+  fireEvent.click(screen.getByRole('button', { name: fr.logSupport.title }));
 }
 
 describe('startup log support', () => {
   it('opens local logs while signed out even if upload settings never resolve', async () => {
     mocks.getLogUploadSettings.mockReturnValue(new Promise(() => {}));
     openSupport();
-    fireEvent.click(screen.getByRole('button', { name: zhCN.settings.about.openLogsDir }));
+    fireEvent.click(screen.getByRole('button', { name: fr.settings.about.openLogsDir }));
     await waitFor(() => expect(mocks.openLogsDir).toHaveBeenCalledOnce());
     expect(mocks.uploadLogsNow).not.toHaveBeenCalled();
   });
@@ -110,18 +110,18 @@ describe('startup log support', () => {
     expect(
       (
         screen.getByRole('button', {
-          name: zhCN.settings.about.logUpload.uploadButton,
+          name: fr.settings.about.logUpload.uploadButton,
         }) as HTMLButtonElement
       ).disabled,
     ).toBe(true);
-    fireEvent.click(screen.getByRole('button', { name: zhCN.settings.about.openLogsDir }));
+    fireEvent.click(screen.getByRole('button', { name: fr.settings.about.openLogsDir }));
     expect(mocks.openLogsDir).toHaveBeenCalledOnce();
   });
 
   it('shows a selectable upload code even when clipboard copying fails', async () => {
     mocks.writeText.mockRejectedValue(new Error('clipboard unavailable'));
     openSupport();
-    const upload = screen.getByRole('button', { name: zhCN.settings.about.logUpload.uploadButton });
+    const upload = screen.getByRole('button', { name: fr.settings.about.logUpload.uploadButton });
     await waitFor(() => expect((upload as HTMLButtonElement).disabled).toBe(false));
     fireEvent.click(upload);
     await waitFor(() => expect(screen.getByRole('status').textContent).toContain('ABCD-EFGH'));
@@ -131,26 +131,26 @@ describe('startup log support', () => {
   it('reports an upload error and leaves the local log action available', async () => {
     mocks.uploadLogsNow.mockRejectedValue(new Error('[LOG_UPLOAD_EMPTY] empty'));
     openSupport();
-    const upload = screen.getByRole('button', { name: zhCN.settings.about.logUpload.uploadButton });
+    const upload = screen.getByRole('button', { name: fr.settings.about.logUpload.uploadButton });
     await waitFor(() => expect((upload as HTMLButtonElement).disabled).toBe(false));
     fireEvent.click(upload);
     await waitFor(() =>
-      expect(mocks.error).toHaveBeenCalledWith(zhCN.settings.about.logUpload.errorEmpty),
+      expect(mocks.error).toHaveBeenCalledWith(fr.settings.about.logUpload.errorEmpty),
     );
-    fireEvent.click(screen.getByRole('button', { name: zhCN.settings.about.openLogsDir }));
+    fireEvent.click(screen.getByRole('button', { name: fr.settings.about.openLogsDir }));
     expect(mocks.openLogsDir).toHaveBeenCalledOnce();
   });
 
   it('retains the upload code after closing and reopening without a working clipboard', async () => {
     mocks.writeText.mockRejectedValue(new Error('clipboard unavailable'));
     openSupport();
-    const upload = screen.getByRole('button', { name: zhCN.settings.about.logUpload.uploadButton });
+    const upload = screen.getByRole('button', { name: fr.settings.about.logUpload.uploadButton });
     await waitFor(() => expect((upload as HTMLButtonElement).disabled).toBe(false));
     fireEvent.click(upload);
     await waitFor(() => expect(screen.getByRole('status').textContent).toContain('ABCD-EFGH'));
-    fireEvent.click(screen.getByRole('button', { name: zhCN.logSupport.close }));
+    fireEvent.click(screen.getByRole('button', { name: fr.logSupport.close }));
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: zhCN.logSupport.title }));
+      fireEvent.click(screen.getByRole('button', { name: fr.logSupport.title }));
     });
     expect(screen.getByRole('status').textContent).toContain('ABCD-EFGH');
   });
@@ -164,33 +164,33 @@ describe('startup log support', () => {
     );
     mocks.writeText.mockRejectedValue(new Error('clipboard unavailable'));
     openSupport();
-    const upload = screen.getByRole('button', { name: zhCN.settings.about.logUpload.uploadButton });
+    const upload = screen.getByRole('button', { name: fr.settings.about.logUpload.uploadButton });
     await waitFor(() => expect((upload as HTMLButtonElement).disabled).toBe(false));
     fireEvent.click(upload);
-    fireEvent.click(screen.getByRole('button', { name: zhCN.logSupport.close }));
-    fireEvent.click(screen.getByRole('button', { name: zhCN.logSupport.title }));
+    fireEvent.click(screen.getByRole('button', { name: fr.logSupport.close }));
+    fireEvent.click(screen.getByRole('button', { name: fr.logSupport.title }));
     await waitFor(() => expect(mocks.getLogUploadSettings).toHaveBeenCalledTimes(2));
     expect(
       (
         screen.getByRole('button', {
-          name: zhCN.settings.about.logUpload.uploadButton,
+          name: fr.settings.about.logUpload.uploadButton,
         }) as HTMLButtonElement
       ).disabled,
     ).toBe(true);
     expect(mocks.uploadLogsNow).toHaveBeenCalledOnce();
-    fireEvent.click(screen.getByRole('button', { name: zhCN.logSupport.close }));
+    fireEvent.click(screen.getByRole('button', { name: fr.logSupport.close }));
     await act(async () => {
       finish({ uploadCode: 'LATE-CODE', recordCount: 1 });
     });
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: zhCN.logSupport.title }));
+      fireEvent.click(screen.getByRole('button', { name: fr.logSupport.title }));
     });
     expect(screen.getByRole('status').textContent).toContain('LATE-CODE');
   });
 
   it('clears the previous upload code when a new attempt starts and fails', async () => {
     openSupport();
-    const upload = screen.getByRole('button', { name: zhCN.settings.about.logUpload.uploadButton });
+    const upload = screen.getByRole('button', { name: fr.settings.about.logUpload.uploadButton });
     await waitFor(() => expect((upload as HTMLButtonElement).disabled).toBe(false));
     fireEvent.click(upload);
     await waitFor(() => expect(screen.getByRole('status').textContent).toContain('ABCD-EFGH'));
@@ -199,20 +199,20 @@ describe('startup log support', () => {
     fireEvent.click(upload);
     expect(screen.queryByRole('status')).toBeNull();
     await waitFor(() =>
-      expect(mocks.error).toHaveBeenCalledWith(zhCN.settings.about.logUpload.errorEmpty),
+      expect(mocks.error).toHaveBeenCalledWith(fr.settings.about.logUpload.errorEmpty),
     );
     expect(screen.queryByRole('status')).toBeNull();
   });
 
   it('hides the startup entry but preserves a user-opened dialog when startup completes', () => {
     const view = render(<StartupLogSupport />);
-    fireEvent.click(screen.getByRole('button', { name: zhCN.logSupport.title }));
+    fireEvent.click(screen.getByRole('button', { name: fr.logSupport.title }));
     mocks.auth.canEnterApp = true;
     mocks.db.localDbGateStatus = 'ready';
     view.rerender(<StartupLogSupport />);
-    expect(screen.queryByRole('button', { name: zhCN.logSupport.title })).toBeNull();
+    expect(screen.queryByRole('button', { name: fr.logSupport.title })).toBeNull();
     expect(screen.getByRole('alertdialog')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: zhCN.logSupport.close }));
+    fireEvent.click(screen.getByRole('button', { name: fr.logSupport.close }));
     expect(screen.queryByRole('alertdialog')).toBeNull();
   });
 
@@ -225,7 +225,7 @@ describe('startup log support', () => {
       expect(
         (
           screen.getByRole('button', {
-            name: zhCN.settings.about.logUpload.uploadButton,
+            name: fr.settings.about.logUpload.uploadButton,
           }) as HTMLButtonElement
         ).disabled,
       ).toBe(false),
@@ -237,10 +237,10 @@ describe('startup log support', () => {
     mocks.db.localDbGateStatus = 'ready';
     mocks.env.status = 'failed';
     const view = render(<StartupLogSupport />);
-    expect(screen.getByRole('button', { name: zhCN.logSupport.title })).toBeTruthy();
+    expect(screen.getByRole('button', { name: fr.logSupport.title })).toBeTruthy();
     mocks.env.status = 'passed';
     view.rerender(<StartupLogSupport />);
-    expect(screen.queryByRole('button', { name: zhCN.logSupport.title })).toBeNull();
+    expect(screen.queryByRole('button', { name: fr.logSupport.title })).toBeNull();
   });
 });
 

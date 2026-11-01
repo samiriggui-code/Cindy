@@ -4,11 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createInstance } from 'i18next';
 import { I18nextProvider } from 'react-i18next';
 import { ConfirmDialogProvider } from '@/components/ui/confirm-dialog-provider';
-import zhCN from '@/i18n/locales/zh-CN/common.json';
 import en from '@/i18n/locales/en/common.json';
-import zhTW from '@/i18n/locales/zh-TW/common.json';
-import ja from '@/i18n/locales/ja/common.json';
-import ko from '@/i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 import { CindyMakeStorageCard, CindyMakeStorageRow } from '../CindyMakePersonalRemote';
 import type { CindyMakePersonalRemoteState } from '../../../../shared/cindyMakePersonalRemote';
 
@@ -16,7 +13,7 @@ vi.mock('@/features/cc-agent/GithubSetupDialog', () => ({
   GithubSetupDialog: () => <div role="dialog">github-setup</div>,
 }));
 
-const copy = zhCN.cindyMake.storage;
+const copy = fr.cindyMake.storage;
 
 async function i18nFor(locale: string, resource: object) {
   const i18n = createInstance();
@@ -33,7 +30,7 @@ async function i18nFor(locale: string, resource: object) {
 async function renderRow(state: CindyMakePersonalRemoteState, act = vi.fn(async () => {})) {
   const onOffer = vi.fn();
   render(
-    <I18nextProvider i18n={await i18nFor('zh-CN', zhCN)}>
+    <I18nextProvider i18n={await i18nFor('fr', fr)}>
       <ConfirmDialogProvider>
         <CindyMakeStorageRow state={state} act={act} onOffer={onOffer} />
       </ConfirmDialogProvider>
@@ -150,7 +147,7 @@ describe('CindyMakeStorageRow', () => {
       sync: 'synced',
       offerMigration: false,
     });
-    expect(screen.getByRole('status').textContent).toContain('你的 GitHub · octo/cindy');
+    expect(screen.getByRole('status').textContent).toContain('Votre GitHub · octo/cindy');
     expect(screen.getByRole('status').textContent).toContain(copy.status.synced);
     // Checking for changes from another computer is the single Sync above, not a row button.
     expect(screen.queryByRole('button', { name: copy.actions.syncNow })).toBeNull();
@@ -197,11 +194,8 @@ describe('CindyMakeStorageRow', () => {
 
 describe('CindyMakeStorageCard', () => {
   it.each([
-    ['zh-CN', zhCN],
-    ['zh-TW', zhTW],
+    ['fr', fr],
     ['en', en],
-    ['ja', ja],
-    ['ko', ko],
   ] as const)(
     'states that the fork is public and stays until a choice in %s',
     async (locale, resource) => {
@@ -237,7 +231,7 @@ describe('CindyMakeStorageCard', () => {
   it('offers a new computer the personal version already on GitHub', async () => {
     const onSave = vi.fn();
     render(
-      <I18nextProvider i18n={await i18nFor('zh-CN', zhCN)}>
+      <I18nextProvider i18n={await i18nFor('fr', fr)}>
         <CindyMakeStorageCard
           state={{
             github: 'connected',
@@ -262,7 +256,7 @@ describe('CindyMakeStorageCard', () => {
 
   it('keeps both choices disabled while the source is prepared before saving', async () => {
     render(
-      <I18nextProvider i18n={await i18nFor('zh-CN', zhCN)}>
+      <I18nextProvider i18n={await i18nFor('fr', fr)}>
         <CindyMakeStorageCard
           state={{
             github: 'connected',

@@ -160,9 +160,9 @@ describe('feishu ImChannelAdapter characterization', () => {
         'The current Agent cannot run on this channel in this permission mode, so messages cannot be processed. Send /permission to choose a supported mode.',
       );
 
-      setMainLocale('zh-CN');
+      setMainLocale('fr');
       expect(copy('acceptEdits')).toBe(
-        '当前 Agent 不支持以此权限模式在该渠道运行，消息将无法处理。请发送 /permission 调整权限模式。',
+        "L'agent actuel ne peut pas s'exécuter sur ce canal dans ce mode d'autorisation, les messages ne peuvent donc pas être traités. Envoyez /autorisation pour choisir un mode pris en charge.",
       );
     } finally {
       setMainLocale(originalLocale);

@@ -4,20 +4,14 @@ import { afterEach, expect, it } from 'vitest';
 import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import en from '@/i18n/locales/en/common.json';
-import zhCN from '@/i18n/locales/zh-CN/common.json';
-import zhTW from '@/i18n/locales/zh-TW/common.json';
-import ja from '@/i18n/locales/ja/common.json';
-import ko from '@/i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 import { CindyMakeBuildFailure } from '../CindyMakeBuildFailure';
 
 afterEach(cleanup);
 
 it.each([
   ['en', en, 'memory limit'],
-  ['zh-CN', zhCN, '内存上限'],
-  ['zh-TW', zhTW, '記憶體上限'],
-  ['ja', ja, 'メモリ上限'],
-  ['ko', ko, '메모리 한도'],
+  ['fr', fr, 'limite de mémoire'],
 ] as const)(
   'shows the actual failure and exit code in %s without expanding the log',
   async (locale, resource, phrase) => {
@@ -61,12 +55,12 @@ it('explains that old receipts have no saved cause rather than inventing one', a
   const i18n = createInstance();
   await i18n
     .use(initReactI18next)
-    .init({ lng: 'zh-CN', resources: { 'zh-CN': { translation: zhCN } } });
+    .init({ lng: 'fr', resources: { fr: { translation: fr } } });
   render(
     <I18nextProvider i18n={i18n}>
       <CindyMakeBuildFailure build={{ status: 'failed', error: 'buildFailed' }} />
     </I18nextProvider>,
   );
-  expect(screen.getByRole('alert').textContent).toContain('这次生成没有保存具体错误');
-  expect(screen.getByRole('alert').textContent).not.toContain('内存上限');
+  expect(screen.getByRole('alert').textContent).toContain("n'a pas enregistré l'erreur spécifique");
+  expect(screen.getByRole('alert').textContent).not.toContain('limite de mémoire');
 });

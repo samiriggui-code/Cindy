@@ -5,10 +5,7 @@ import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { setDataOwnerGeneration } from '@/contexts/dataOwnerGeneration';
 import en from '@/i18n/locales/en/common.json';
-import zhCN from '@/i18n/locales/zh-CN/common.json';
-import zhTW from '@/i18n/locales/zh-TW/common.json';
-import ja from '@/i18n/locales/ja/common.json';
-import ko from '@/i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 import { MAKE_DOCTOR_CHECK_IDS, type MakeDoctorReport } from '../../../../shared/cindyMakeDoctor';
 import { CindyMakePreflightDialog } from '../CindyMakePreflightDialog';
 
@@ -59,40 +56,13 @@ describe('Cindy Make close confirmation with real translations', () => {
       complete: 'Preparation is complete, but work has not started.',
     },
     {
-      locale: 'zh-CN',
-      resource: zhCN,
-      close: '关闭',
-      title: '关闭 Cindy Make？',
-      keep: '继续查看',
-      source: '源码准备尚未完成。',
-      complete: '准备已完成，尚未开始制作。',
-    },
-    {
-      locale: 'zh-TW',
-      resource: zhTW,
-      close: '關閉',
-      title: '關閉 Cindy Make？',
-      keep: '繼續查看',
-      source: '原始碼準備尚未完成。',
-      complete: '準備已完成，尚未開始製作。',
-    },
-    {
-      locale: 'ja',
-      resource: ja,
-      close: '閉じる',
-      title: 'Cindy Make を閉じますか？',
-      keep: '表示を続ける',
-      source: 'ソースコードの準備が進行中です。',
-      complete: '準備は完了していますが、制作はまだ始まっていません。',
-    },
-    {
-      locale: 'ko',
-      resource: ko,
-      close: '닫기',
-      title: 'Cindy Make를 닫을까요?',
-      keep: '계속 보기',
-      source: '소스 코드를 준비하고 있습니다.',
-      complete: '준비가 완료되었지만 제작은 아직 시작되지 않았습니다.',
+      locale: 'fr',
+      resource: fr,
+      close: 'Rejeter',
+      title: 'Fermer Cindy Make?',
+      keep: 'Continuer à regarder',
+      source: 'La préparation des sources est toujours en cours.',
+      complete: "Les préparatifs sont terminés, mais les travaux n'ont pas commencé.",
     },
   ])(
     'renders $locale state and actions without fallback or damaged text',

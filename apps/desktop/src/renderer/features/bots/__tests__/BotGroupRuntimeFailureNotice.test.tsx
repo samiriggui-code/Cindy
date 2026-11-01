@@ -1,31 +1,31 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import fr from '@/i18n/locales/fr/common.json';
 import { BotGroupRuntimeFailureNotice } from '../BotGroupRuntimeFailureNotice';
-import zhCN from '../../../i18n/locales/zh-CN/common.json';
 
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string, { name }: { name: string }) => {
   const code = key.split('.').at(-1)!;
-  return zhCN.bots.groupChat.notice.runtimeFailure[code as keyof typeof zhCN.bots.groupChat.notice.runtimeFailure].replace('{{name}}', name);
+  return fr.bots.groupChat.notice.runtimeFailure[code as keyof typeof fr.bots.groupChat.notice.runtimeFailure].replace('{{name}}', name);
 } }) }));
 afterEach(cleanup);
 
 describe('group failure notice', () => {
   it('shows the image failure and the actual recovery settings', () => {
     render(<BotGroupRuntimeFailureNotice name="m" code="IMAGE_INPUT_UNSUPPORTED" />);
-    expect(screen.getByText(/当前模型不支持图片/).textContent).toContain('设置 → 个性化 → 视觉桥');
-    expect(screen.getByText(/当前模型不支持图片/).textContent).toContain('重新发送');
+    expect(screen.getByText(/ne prend pas en charge les images/).textContent).toContain('Paramètres → Personnalisation');
+    expect(screen.getByText(/ne prend pas en charge les images/).textContent).toContain('envoyez à nouveau votre message');
   });
   // #6835: unit render entry must show the limit and recovery, not an unavailable notice.
   it.each([
-    ['REMOTE_DEVICE_LIMIT', '设备'],
-    ['REMOTE_TOTAL_LIMIT', '任务总数'],
+    ['REMOTE_DEVICE_LIMIT', 'appareil'],
+    ['REMOTE_TOTAL_LIMIT', 'limite totale'],
   ])('explains %s with a recovery action', (code, reason) => {
     render(<BotGroupRuntimeFailureNotice name="Bot" code={code} />);
-    const text = screen.getByText(/已达上限/).textContent;
+    const text = screen.getByText(/a atteint sa limite/).textContent;
     expect(text).toContain('Bot');
     expect(text).toContain(reason);
-    expect(text).toContain('远程与分享');
+    expect(text).toContain('Remote');
   });
   it('does not render an unknown or private diagnostic as group content', () => {
     const { container } = render(<BotGroupRuntimeFailureNotice name="m" code="private-token-and-path" />);
@@ -33,7 +33,7 @@ describe('group failure notice', () => {
   });
   it('explains upstream capacity and offers a retry without attributing it to request frequency', () => {
     render(<BotGroupRuntimeFailureNotice name="m" code="UPSTREAM_OVERLOADED" />);
-    expect(screen.getByText(/模型服务暂时繁忙/).textContent).toContain('稍后重新发送');
-    expect(screen.getByText(/模型服务暂时繁忙/).textContent).toContain('其他可用模型');
+    expect(screen.getByText(/temporairement surchargé/).textContent).toContain('Réessayez plus tard');
+    expect(screen.getByText(/temporairement surchargé/).textContent).toContain('un autre modèle disponible');
   });
 });

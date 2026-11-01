@@ -195,8 +195,8 @@ async function freshService() {
   getSessionNotificationTurnSignal.mockReset().mockReturnValue(undefined);
   const service = await import('../notificationService');
   const { setMainLocale } = await import('../i18n');
-  // 既有分发断言以简中为基准；需要验证其它语言的用例会在调用前显式切换。
-  setMainLocale('zh-CN');
+  // 既有分发断言以法语为基准；需要验证其它语言的用例会在调用前显式切换。
+  setMainLocale('fr');
   return service;
 }
 
@@ -629,9 +629,9 @@ describe('notificationService — channels 分发', () => {
     await registeredHandlers.get('notification:show-session-event')!({}, payload);
     expect(feishuIm.sendText).not.toHaveBeenCalled();
     await vi.advanceTimersByTimeAsync(1_000);
-    expect(notificationCtor).toHaveBeenCalledWith(expect.objectContaining({ title: 'Cindy', body: '有新回复' }));
-    expect(sendMobileSessionNotify).toHaveBeenCalledWith(expect.objectContaining({ fallbackBody: '有新回复' }));
-    expect(feishuIm.sendText).toHaveBeenCalledWith('ou_owner', 'Cindy\n有新回复');
+    expect(notificationCtor).toHaveBeenCalledWith(expect.objectContaining({ title: 'Cindy', body: 'Nouvelle réponse' }));
+    expect(sendMobileSessionNotify).toHaveBeenCalledWith(expect.objectContaining({ fallbackBody: 'Nouvelle réponse' }));
+    expect(feishuIm.sendText).toHaveBeenCalledWith('ou_owner', 'Cindy\nNouvelle réponse');
     expect((sendMobileSessionNotify.mock.calls[0] as unknown as [Record<string, unknown>])[0]).not.toHaveProperty('eventId');
     release();
     await vi.advanceTimersByTimeAsync(0);
@@ -696,7 +696,7 @@ describe('notificationService — channels 分发', () => {
 
     await registeredHandlers.get('notification:show-session-event')!({}, payload);
     await vi.advanceTimersByTimeAsync(1_000);
-    expect(notificationCtor).toHaveBeenCalledWith(expect.objectContaining({ title: 'Cindy', body: '有新回复' }));
+    expect(notificationCtor).toHaveBeenCalledWith(expect.objectContaining({ title: 'Cindy', body: 'Nouvelle réponse' }));
     expect(sendMobileSessionNotify).toHaveBeenCalledTimes(1);
     release();
     await vi.advanceTimersByTimeAsync(0);
@@ -722,13 +722,13 @@ describe('notificationService — channels 分发', () => {
     await invokeHandler(payload);
 
     expect(notificationCtor).toHaveBeenCalledTimes(1);
-    expect(notificationCtor).toHaveBeenCalledWith(expect.objectContaining({ body: '有新回复' }));
+    expect(notificationCtor).toHaveBeenCalledWith(expect.objectContaining({ body: 'Nouvelle réponse' }));
     expect(sendMobileSessionNotify).toHaveBeenCalledTimes(1);
     expect(sendMobileSessionNotify).toHaveBeenCalledWith(expect.objectContaining({
-      fallbackBody: '有新回复', eventId: 'turn:100:200:signal-ended',
+      fallbackBody: 'Nouvelle réponse', eventId: 'turn:100:200:signal-ended',
     }));
     expect(feishuIm.sendText).toHaveBeenCalledTimes(1);
-    expect(feishuIm.sendText).toHaveBeenCalledWith('owner', 'Cindy\n有新回复');
+    expect(feishuIm.sendText).toHaveBeenCalledWith('owner', 'Cindy\nNouvelle réponse');
   });
 
   it('drops the bounded fallback after the data owner changes', async () => {
@@ -828,8 +828,8 @@ describe('notificationService — channels 分发', () => {
     readSessionNotificationPreview.mockResolvedValueOnce({ teammateName: 'Cindy', eventId: 'turn:100:200' })
       .mockRejectedValueOnce(new Error('read unavailable'));
     await invokeHandler({ sessionId: 's1', title: 'Cindy', kind: 'done', channels: { desktop: true, mobile: true } });
-    expect(notificationCtor).toHaveBeenCalledWith(expect.objectContaining({ title: 'Cindy', body: '有新回复' }));
-    expect(sendMobileSessionNotify).toHaveBeenCalledWith(expect.objectContaining({ fallbackBody: '有新回复' }));
+    expect(notificationCtor).toHaveBeenCalledWith(expect.objectContaining({ title: 'Cindy', body: 'Nouvelle réponse' }));
+    expect(sendMobileSessionNotify).toHaveBeenCalledWith(expect.objectContaining({ fallbackBody: 'Nouvelle réponse' }));
   });
 
   it('still delivers the base notice if even the initial lookup fails', async () => {
@@ -987,7 +987,7 @@ describe('notificationService — channels 分发', () => {
     expect(notificationCtor).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Cindy · Hello',
-        body: '已完成 ✓',
+        body: 'Terminé ✓',
       }),
     );
     expect(feishuIm.sendMarkdownText).not.toHaveBeenCalled();
@@ -1008,7 +1008,7 @@ describe('notificationService — channels 分发', () => {
     expect(notificationCtor).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Cindy · Needs input',
-        body: '需要你回复',
+        body: 'Réponse nécessaire',
       }),
     );
   });
@@ -1030,7 +1030,7 @@ describe('notificationService — channels 分发', () => {
     // 文案断言 — 锁住对外可见的飞书消息格式,后续如要改文案需主动调整测试。
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledWith(
       'ou_owner',
-      'Cindy · 任务「Hello」需要你回复',
+      'Cindy · La session « Hello » a besoin de votre réponse',
     );
   });
 
@@ -1050,7 +1050,7 @@ describe('notificationService — channels 分发', () => {
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledTimes(1);
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledWith(
       'ou_owner',
-      'Cindy · 任务「Hello」已完成 ✓',
+      'Cindy · Séance « Hello » terminée ✓',
     );
     expect(feishuIm.sendText).not.toHaveBeenCalled();
   });
@@ -1084,7 +1084,7 @@ describe('notificationService — channels 分发', () => {
 
     await invokeHandler({ sessionId: 'bot-main', title: 'Old title', kind: 'done', channels: { desktop: false, feishu: true } });
 
-    expect(feishuIm.sendText).toHaveBeenCalledWith('ou_owner', 'Mika\n图片');
+    expect(feishuIm.sendText).toHaveBeenCalledWith('ou_owner', 'Mika\nImages');
     expect(feishuIm.sendMarkdownText).not.toHaveBeenCalled();
   });
 
@@ -1145,21 +1145,21 @@ describe('notificationService — channels 分发', () => {
     expect(notificationCtor).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Cindy · Broken model',
-        body: '执行失败',
+        body: 'Échec',
       }),
     );
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledWith(
       'ou_owner',
-      'Cindy · 任务「Broken model」执行失败',
+      'Cindy · La session « Broken model » a échoué',
     );
   });
 
-  it('zh-TW → 桌面与飞书使用繁中，空标题兜底也跟随当前语言', async () => {
+  it('en → 桌面与飞书使用英文，空标题兜底也跟随当前语言', async () => {
     const { initNotificationService, showDesktopSessionEvent } = await freshService();
     const { setMainLocale } = await import('../i18n');
     const feishuIm = makeFeishuIm('ou_owner');
     initNotificationService(baseDeps(feishuIm));
-    setMainLocale('zh-TW');
+    setMainLocale('en');
 
     await invokeHandler({
       sessionId: 's1',
@@ -1171,12 +1171,12 @@ describe('notificationService — channels 分发', () => {
     expect(notificationCtor).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Cindy · 整理報告',
-        body: '需要你回覆',
+        body: 'Reply needed',
       }),
     );
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledWith(
       'ou_owner',
-      'Cindy · 任務「整理報告」需要你回覆',
+      'Cindy · Session “整理報告” needs your reply',
     );
 
     notificationCtor.mockClear();
@@ -1184,8 +1184,8 @@ describe('notificationService — channels 分发', () => {
     showDesktopSessionEvent(() => null, { sessionId: '', title: '', kind: 'error' });
     expect(notificationCtor).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'Cindy · 未命名任務',
-        body: '執行失敗',
+        title: 'Cindy · Untitled session',
+        body: 'Failed',
       }),
     );
   });
@@ -1494,7 +1494,7 @@ describe('teammate reply previews', () => {
     const payload = { sessionId: 'bot-main', title: 'Cindy · Old title', kind: 'done', channels: { desktop: true, mobile: true } };
     await invokeHandler(payload);
     expect(notificationCtor).toHaveBeenCalledWith(expect.objectContaining({ title: 'Cindy', body: '完成：报告 a_b * 2' }));
-    expect(sendMobileSessionNotify).toHaveBeenCalledWith(expect.objectContaining({ sessionId: 'bot-main', title: 'Cindy', eventId: 'turn:100:200', fallbackBody: '有新回复' }));
+    expect(sendMobileSessionNotify).toHaveBeenCalledWith(expect.objectContaining({ sessionId: 'bot-main', title: 'Cindy', eventId: 'turn:100:200', fallbackBody: 'Nouvelle réponse' }));
     await invokeHandler(payload);
     expect(notificationCtor).toHaveBeenCalledTimes(1);
     expect(sendMobileSessionNotify).toHaveBeenCalledTimes(1);

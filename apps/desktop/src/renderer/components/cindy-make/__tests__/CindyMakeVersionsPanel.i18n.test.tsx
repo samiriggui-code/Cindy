@@ -5,10 +5,7 @@ import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { setDataOwnerGeneration } from '@/contexts/dataOwnerGeneration';
 import en from '@/i18n/locales/en/common.json';
-import zhCN from '@/i18n/locales/zh-CN/common.json';
-import zhTW from '@/i18n/locales/zh-TW/common.json';
-import ja from '@/i18n/locales/ja/common.json';
-import ko from '@/i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 import type { CindyVersionsState } from '../../../../shared/cindyVersions';
 import { CindyMakeVersionsPanel } from '../CindyMakeVersionsPanel';
 
@@ -26,36 +23,12 @@ const cases = [
     update: 'Restart to Update',
   },
   {
-    locale: 'zh-CN',
-    resource: zhCN,
-    title: '我的版本',
-    switchLabel: '切换并重启',
-    remove: '删除版本',
-    update: '重启更新',
-  },
-  {
-    locale: 'zh-TW',
-    resource: zhTW,
-    title: '我的版本',
-    switchLabel: '切換並重新啟動',
-    remove: '刪除版本',
-    update: '重新啟動以更新',
-  },
-  {
-    locale: 'ja',
-    resource: ja,
-    title: 'マイバージョン',
-    switchLabel: '切り替えて再起動',
-    remove: 'バージョンを削除',
-    update: '再起動して更新',
-  },
-  {
-    locale: 'ko',
-    resource: ko,
-    title: '내 버전',
-    switchLabel: '전환 후 다시 시작',
-    remove: '버전 삭제',
-    update: '다시 시작하여 업데이트',
+    locale: 'fr',
+    resource: fr,
+    title: 'Mes versions',
+    switchLabel: 'Changer et redémarrer',
+    remove: 'Supprimer la version',
+    update: 'Redémarrer pour mettre à jour',
   },
 ];
 

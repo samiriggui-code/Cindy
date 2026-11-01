@@ -19,10 +19,7 @@
 import { describe, expect, it } from 'vitest';
 
 import en from '../i18n/locales/en/common.json';
-import ja from '../i18n/locales/ja/common.json';
-import ko from '../i18n/locales/ko/common.json';
-import zhCN from '../i18n/locales/zh-CN/common.json';
-import zhTW from '../i18n/locales/zh-TW/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 
 const BOT_HANDLE = '@askmycindy';
 
@@ -38,17 +35,11 @@ type GuideCopy = {
   ackConfirm: string;
 };
 
+type GuideBundle = { settings: { remoteControl: { hook: { x: { guide: GuideCopy } } } } };
+
 const LOCALES: Record<string, GuideCopy> = {
-  'zh-CN': (zhCN as never as { settings: { remoteControl: { hook: { x: { guide: GuideCopy } } } } })
-    .settings.remoteControl.hook.x.guide,
-  'zh-TW': (zhTW as never as { settings: { remoteControl: { hook: { x: { guide: GuideCopy } } } } })
-    .settings.remoteControl.hook.x.guide,
-  en: (en as never as { settings: { remoteControl: { hook: { x: { guide: GuideCopy } } } } })
-    .settings.remoteControl.hook.x.guide,
-  ja: (ja as never as { settings: { remoteControl: { hook: { x: { guide: GuideCopy } } } } })
-    .settings.remoteControl.hook.x.guide,
-  ko: (ko as never as { settings: { remoteControl: { hook: { x: { guide: GuideCopy } } } } })
-    .settings.remoteControl.hook.x.guide,
+  en: (en as never as GuideBundle).settings.remoteControl.hook.x.guide,
+  fr: (fr as never as GuideBundle).settings.remoteControl.hook.x.guide,
 };
 
 describe('X 用法与风险告知的多语言文案', () => {
@@ -76,19 +67,16 @@ describe('X 用法与风险告知的多语言文案', () => {
   });
 
   it('中文命令词保持服务端接受的原文, 不翻译命令, 对非中文用户不产生噪音', () => {
-    expect(LOCALES['zh-CN'].withdrawBody).toContain('/删除');
-    expect(LOCALES['zh-TW'].withdrawBody).toContain('/删除');
-    expect(LOCALES['zh-TW'].withdrawBody).not.toContain('/刪除');
-    for (const loc of ['en', 'ja', 'ko']) {
+    for (const loc of ['en', 'fr']) {
       expect(LOCALES[loc].withdrawBody, `${loc} 不该提 /删除`).not.toContain('删除');
     }
   });
 
   it('风险那两条都点明了公开可见与默认工作目录', () => {
-    // 这一节存在的理由。zh-CN 用关键词钉住, 其它语言只钉「两条都非空且互不相同」——
+    // 这一节存在的理由。fr 用关键词钉住, 其它语言只钉「两条都非空且互不相同」——
     // 关键词逐语言硬编码会变成翻译的枷锁, 而空/重复才是真正会丢信息的失败形态。
-    expect(LOCALES['zh-CN'].riskPublicBody).toContain('公开');
-    expect(LOCALES['zh-CN'].riskWorkdirBody).toContain('默认工作目录');
+    expect(LOCALES.fr.riskPublicBody).toContain('publiques');
+    expect(LOCALES.fr.riskWorkdirBody).toContain('répertoire de travail par défaut');
     for (const [loc, guide] of Object.entries(LOCALES)) {
       expect(guide.riskPublicBody, `${loc} 两条风险不得相同`).not.toBe(guide.riskWorkdirBody);
     }
@@ -101,19 +89,13 @@ describe('X 用法与风险告知的多语言文案', () => {
     // 单独播报时若只念「我明白」, 用户根本不知道自己在确认什么(#1347 review 由 codex
     // 指出 P2; 初版四语分别是「我明白」/ Got it / 了解しました / 이해했어요)。
     const BANNED: Record<string, readonly string[]> = {
-      'zh-CN': ['我明白', '知道了', '确定', '提交'],
-      'zh-TW': ['我明白', '知道了', '確定', '提交'],
       en: ['Got it', 'Got It', 'OK', 'Confirm'],
-      ja: ['了解しました', 'OK'],
-      ko: ['이해했어요', '확인'],
+      fr: ['Compris', 'OK', 'Confirmer'],
     };
     // 对象 = 风险本身。四语各自的说法, 比"长度下限"之类的代理判据准确。
     const OBJECT: Record<string, string> = {
-      'zh-CN': '风险',
-      'zh-TW': '風險',
       en: 'Risk',
-      ja: 'リスク',
-      ko: '위험',
+      fr: 'risques',
     };
     for (const [loc, guide] of Object.entries(LOCALES)) {
       for (const word of BANNED[loc]) {
@@ -136,11 +118,8 @@ describe('X 用法与风险告知的多语言文案', () => {
     // 修法刻意选「与上下文无关的措辞」而不是给组件加 variant:这一节的设计前提就是
     // 「一份文案、两处渲染, 不各写一份」, 加 variant 等于把它想消掉的漂移风险请回来。
     const BANNED: Record<string, readonly string[]> = {
-      'zh-CN': ['下面', '下方', '以下'],
-      'zh-TW': ['下面', '下方', '以下'],
       en: ['below'],
-      ja: ['下で', '以下'],
-      ko: ['아래'],
+      fr: ['ci-dessous', 'ci-après'],
     };
     for (const [loc, guide] of Object.entries(LOCALES)) {
       for (const word of BANNED[loc]) {
@@ -156,8 +135,8 @@ describe('X 用法与风险告知的多语言文案', () => {
     // Dash 2026-08-02 的产品表态:光说「回复是公开的」用户还得自己推导该拿它干什么。
     // 要明确说这个功能适合公开地找答案、解决问题, **不适合处理私事**(有隐私暴露风险)。
     // 这是最容易在后续翻译润色里被抹平的一句 —— 抹平之后风险告知就退回纯事实陈述。
-    expect(LOCALES['zh-CN'].riskPublicBody).toContain('不适合');
-    expect(LOCALES['zh-CN'].riskPublicBody).toContain('隐私');
+    expect(LOCALES.fr.riskPublicBody).toContain('et non pour');
+    expect(LOCALES.fr.riskPublicBody).toContain('vie privée');
     // 其它语言只钉长度:能承载「事实 + 适用性判断」两句的下限, 比逐语言硬编码关键词
     // 稳(译法可以变, 但把两句压成一句必然掉到这个长度以下)。
     for (const [loc, guide] of Object.entries(LOCALES)) {

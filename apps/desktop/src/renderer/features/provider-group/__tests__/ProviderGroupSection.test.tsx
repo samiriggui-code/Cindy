@@ -9,14 +9,16 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ProviderGroupConfig, ProviderGroupView } from '../../../../shared/providerGroup';
+import fr from '@/i18n/locales/fr/common.json';
 import { toast } from '@/lib/toast';
-import zhCN from '../../../i18n/locales/zh-CN/common.json';
 import { memberStatusText, ProviderGroupSection } from '../ProviderGroupSection';
 import { ProviderGroupAddDialog } from '../ProviderGroupAddDialog';
 import { __testing as localGroupsTesting, useLocalProviderGroupsState } from '../useLocalProviderGroups';
 import { __testing as groupViewTesting } from '../useProviderGroup';
 
 let realLocale: ReturnType<typeof createInstance> | null = null;
+const QUOTA_FIRST_HINT =
+  "Lorsque l'utilisation de l'abonnement est disponible, les ordinateurs dont le quota est bientôt réinitialisé et qui en ont encore beaucoup sont les premiers, de sorte que chaque compte est utilisé uniformément au fil du temps ; les similaires suivent la stratégie du groupe";
 const providerState = vi.hoisted(() => ({ providers: [
   { id: 'anthropic', connected: true, auth: { method: 'oauth', native: 'claude' } },
 ] }));
@@ -192,7 +194,7 @@ describe('ProviderGroupSection', () => {
   // 转分享(provider-sharing.md §4.3)：分享来的电脑的主人是否同意本机分享出去的人经组使用它。
   it('shows whether the owner of a shared-in computer agreed to the people this computer shares with', async () => {
     realLocale = createInstance();
-    await realLocale.init({ lng: 'zh-CN', resources: { 'zh-CN': { translation: zhCN } }, interpolation: { escapeValue: false } });
+    await realLocale.init({ lng: 'fr', resources: { fr: { translation: fr } }, interpolation: { escapeValue: false } });
     const SHARED = { key: 'share:s1:anthropic', kind: 'share' as const, agentDeviceId: 'share:s1', providerId: 'anthropic', limit: 4, weight: 1, paused: false };
     stored = { strategy: 'least', autoSwitch: true, members: [LOCAL, SHARED] };
     const view = viewOf(stored);
@@ -212,15 +214,15 @@ describe('ProviderGroupSection', () => {
     render(<ProviderGroupSection providerId="anthropic" providerName="Anthropic" />);
     const rows = await screen.findAllByTestId('provider-group-member');
     await waitFor(() => expect(within(rows[1]).getByTestId('provider-group-member-reshare-summary').textContent)
-      .toBe('1 位分享的人等待 Kai 同意'));
+      .toBe("1 personne avec qui vous partagez attend que Kai soit d'accord"));
     // 本机这一行不显示。
     expect(within(rows[0]).queryByTestId('provider-group-member-reshare-summary')).toBeNull();
     expect(screen.queryByTestId('provider-group-member-reshare')).toBeNull();
     fireEvent.click(rows[1].querySelector<HTMLButtonElement>('button[aria-expanded]')!);
     const list = within(rows[1]).getByTestId('provider-group-member-reshare');
-    expect(list.textContent).toContain('需要 Kai 逐人同意');
+    expect(list.textContent).toContain("Kai s'accorde personne par personne");
     const guests = within(list).getAllByTestId('provider-group-member-reshare-guest');
-    expect(guests.map((guest) => guest.textContent)).toEqual(['CCarol等待同意', 'DDave已同意']);
+    expect(guests.map((guest) => guest.textContent)).toEqual(['CCarolEn attente', "DDaveD'accord"]);
   });
 
   it('expands a computer to show the quota of its own account', async () => {
@@ -309,17 +311,16 @@ describe('ProviderGroupSection', () => {
     expect(confirmSpy).toHaveBeenCalledWith(expect.objectContaining({ confirmVariant: 'destructive' }));
   });
 
-  it('explains in Chinese that quota comes first for a disconnected subscription and shows an old usage group as least busy', async () => {
+  it('explains in French that quota comes first for a disconnected subscription and shows an old usage group as least busy', async () => {
     realLocale = createInstance();
-    await realLocale.init({ lng: 'zh-CN', resources: { 'zh-CN': { translation: zhCN } }, interpolation: { escapeValue: false } });
+    await realLocale.init({ lng: 'fr', resources: { fr: { translation: fr } }, interpolation: { escapeValue: false } });
     providerState.providers[0].connected = false;
     stored = { strategy: 'usage', autoSwitch: true, members: [LOCAL] };
     render(<ProviderGroupSection providerId="anthropic" providerName="Claude" />);
-    expect(await screen.findByText('能读取订阅用量时，先用快重置、还剩得多的电脑，各账号会按时间均匀用掉；差不多时按组策略')).toBeTruthy();
-    expect(screen.getByRole('radio', { name: '最少占用' }).getAttribute('aria-checked')).toBe('true');
-    expect(screen.getByText('给最闲的那台')).toBeTruthy();
-    expect(screen.queryByRole('radio', { name: '用量均衡' })).toBeNull();
-    fireEvent.click(screen.getByRole('radio', { name: '按顺序' }));
+    expect(await screen.findByText(QUOTA_FIRST_HINT, { normalizer: (value) => value })).toBeTruthy();
+    expect(screen.getByRole('radio', { name: 'Le moins occupé' }).getAttribute('aria-checked')).toBe('true');
+    expect(screen.getByText('Va au moins occupé')).toBeTruthy();
+    fireEvent.click(screen.getByRole('radio', { name: "Dans l'ordre" }));
     await waitFor(() => expect(stored?.strategy).toBe('order'));
   });
 
@@ -328,15 +329,14 @@ describe('ProviderGroupSection', () => {
     { kind: 'mixed local API and remote subscription', members: [LOCAL, MINI] },
   ])('explains when quota overrides the strategy for a $kind group', async ({ members }) => {
     realLocale = createInstance();
-    await realLocale.init({ lng: 'zh-CN', resources: { 'zh-CN': { translation: zhCN } }, interpolation: { escapeValue: false } });
+    await realLocale.init({ lng: 'fr', resources: { fr: { translation: fr } }, interpolation: { escapeValue: false } });
     providerState.providers[0].auth.method = 'api-key';
     // Group views do not expose remote authentication types; the local connection cannot gate this explanation.
     stored = { strategy: 'order', autoSwitch: true, members };
     render(<ProviderGroupSection providerId="anthropic" providerName="Anthropic" />);
     await screen.findAllByTestId('provider-group-member');
-    expect(screen.getByText('能读取订阅用量时，先用快重置、还剩得多的电脑，各账号会按时间均匀用掉；差不多时按组策略')).toBeTruthy();
-    expect(screen.getByRole('radio', { name: '按顺序' }).getAttribute('aria-checked')).toBe('true');
-    expect(screen.queryByRole('radio', { name: '用量均衡' })).toBeNull();
+    expect(screen.getByText(QUOTA_FIRST_HINT, { normalizer: (value) => value })).toBeTruthy();
+    expect(screen.getByRole('radio', { name: "Dans l'ordre" }).getAttribute('aria-checked')).toBe('true');
   });
 
   it('lists several accounts of one computer under that computer, each with its own settings', async () => {
@@ -406,7 +406,7 @@ describe('ProviderGroupSection', () => {
 
   it('lists several shares from the same computer of one person under that computer, in the group and when adding', async () => {
     realLocale = createInstance();
-    await realLocale.init({ lng: 'zh-CN', resources: { 'zh-CN': { translation: zhCN } }, interpolation: { escapeValue: false } });
+    await realLocale.init({ lng: 'fr', resources: { fr: { translation: fr } }, interpolation: { escapeValue: false } });
     const share = (id: string, providerName: string) => ({
       key: `share:${id}:anthropic`, kind: 'share' as const, agentDeviceId: `share:${id}`, providerId: 'anthropic',
       providerName, hostDeviceId: 'kai-pc', limit: 4, weight: 1, paused: false,
@@ -423,20 +423,20 @@ describe('ProviderGroupSection', () => {
     render(<ProviderGroupSection providerId="anthropic" providerName="Anthropic" />);
     const device = await screen.findByTestId('provider-group-device');
     const header = within(device).getByTestId('provider-group-device-header');
-    expect(header.textContent).toContain('Kai 的电脑');
-    expect(header.textContent).toContain('来自 Kai 的分享');
-    expect(header.textContent).toContain('2 个账号');
+    expect(header.textContent).toContain("L'ordinateur de Kai");
+    expect(header.textContent).toContain('Partagé par Kai');
+    expect(header.textContent).toContain('2 comptes');
     const accounts = within(device).getAllByTestId('provider-group-member');
     expect(accounts[0].textContent).toContain('Claude Pro');
     expect(accounts[1].textContent).toContain('Claude Max');
     // 本机 + Kai 的那台 = 2 台。
-    expect(screen.getByRole('heading', { name: '供应商组' }).nextElementSibling?.textContent).toBe('2');
-    fireEvent.click(screen.getByRole('button', { name: '添加电脑' }));
+    expect(screen.getByRole('heading', { name: 'Groupe de fournisseurs' }).nextElementSibling?.textContent).toBe('2');
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter un ordinateur' }));
     const dialog = await screen.findByTestId('provider-group-add-dialog');
     const offered = await within(dialog).findByTestId('provider-group-candidate-device');
-    expect(offered.textContent).toContain('Kai 的电脑');
+    expect(offered.textContent).toContain("L'ordinateur de Kai");
     expect(within(offered).getAllByTestId('provider-group-candidate').map((row) => row.textContent))
-      .toEqual(['Claude Pro已在组里', 'Claude Max已在组里']);
+      .toEqual(['Claude ProDéjà en groupe', 'Claude MaxDéjà en groupe']);
   });
 
   it('keeps remote management and account quotas when grouping several accounts by computer', async () => {
@@ -487,7 +487,7 @@ describe('ProviderGroupSection', () => {
     { kind: 'remote', deviceId: 'owner-computer' },
   ])('shows a generic subscription quota hint for a $kind OpenAI group', async ({ deviceId }) => {
     realLocale = createInstance();
-    await realLocale.init({ lng: 'zh-CN', resources: { 'zh-CN': { translation: zhCN } }, interpolation: { escapeValue: false } });
+    await realLocale.init({ lng: 'fr', resources: { fr: { translation: fr } }, interpolation: { escapeValue: false } });
     stored = { strategy: 'least', autoSwitch: true, members: [{ ...LOCAL, providerId: 'openai' }] };
     if (deviceId) command.mockResolvedValue(viewOf(stored));
     render(<ProviderGroupSection
@@ -497,7 +497,7 @@ describe('ProviderGroupSection', () => {
       initialConfig={stored}
     />);
     await screen.findAllByTestId('provider-group-member');
-    expect(screen.getByText('能读取订阅用量时，先用快重置、还剩得多的电脑，各账号会按时间均匀用掉；差不多时按组策略')).toBeTruthy();
+    expect(screen.getByText(QUOTA_FIRST_HINT, { normalizer: (value) => value })).toBeTruthy();
   });
 });
 

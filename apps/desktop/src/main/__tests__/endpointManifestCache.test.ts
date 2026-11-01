@@ -148,8 +148,8 @@ describe('endpointManifestCache', () => {
   });
 
   it('formatCacheSavedAt 解析不了就原样回显', () => {
-    expect(formatCacheSavedAt('not-a-date', 'zh-CN')).toBe('not-a-date');
-    expect(formatCacheSavedAt(ENTRY.savedAt, 'zh-CN')).not.toBe('');
+    expect(formatCacheSavedAt('not-a-date', 'fr')).toBe('not-a-date');
+    expect(formatCacheSavedAt(ENTRY.savedAt, 'fr')).not.toBe('');
   });
 });
 

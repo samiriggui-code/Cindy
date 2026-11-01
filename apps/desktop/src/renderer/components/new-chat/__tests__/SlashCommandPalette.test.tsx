@@ -2,7 +2,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import zhCNCommon from '@/i18n/locales/zh-CN/common.json';
+import frCommon from '@/i18n/locales/fr/common.json';
 import type { UnifiedCommand } from '@/lib/slashCommands';
 import { CINDY_LEARN_SOURCE_DESCRIPTION } from '../../../../shared/cindyBuiltInSkills';
 
@@ -121,11 +121,11 @@ describe('SlashCommandPalette project Skill rows', () => {
   });
 
   it('uses the automatic loading copy without a trust or admission action', () => {
-    expect(zhCNCommon.commandPalette.projectSkillNotLoaded).toBe(
-      '当前 Pi 任务尚未加载此项目 Skill，新任务会自动尝试加载',
+    expect(frCommon.commandPalette.projectSkillNotLoaded).toBe(
+      "Cette tâche Pi n'a pas chargé cette compétence de projet. Les nouvelles tâches tenteront automatiquement de le charger.",
     );
-    expect(zhCNCommon.commandPalette).not.toHaveProperty('projectTrustRequired');
-    expect(zhCNCommon.commandPalette).not.toHaveProperty('projectSkillConfirmAction');
+    expect(frCommon.commandPalette).not.toHaveProperty('projectTrustRequired');
+    expect(frCommon.commandPalette).not.toHaveProperty('projectSkillConfirmAction');
   });
 
   it('continues to select a loaded Skill normally', () => {

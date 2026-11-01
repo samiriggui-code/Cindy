@@ -5,10 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import en from '@/i18n/locales/en/common.json';
-import zhCN from '@/i18n/locales/zh-CN/common.json';
-import zhTW from '@/i18n/locales/zh-TW/common.json';
-import ja from '@/i18n/locales/ja/common.json';
-import ko from '@/i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 import type { Session } from '@/lib/ccAgent.types';
 import { setDataOwnerGeneration } from '@/contexts/dataOwnerGeneration';
 import { TaskMigrationDialog } from '../TaskMigrationDialog';
@@ -67,10 +64,7 @@ afterEach(cleanup);
 
 const resources = [
   ['en', en],
-  ['zh-CN', zhCN],
-  ['zh-TW', zhTW],
-  ['ja', ja],
-  ['ko', ko],
+  ['fr', fr],
 ] as const;
 
 async function mount(locale: string, resource: object) {

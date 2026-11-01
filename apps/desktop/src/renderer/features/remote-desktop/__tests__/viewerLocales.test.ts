@@ -1,17 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import en from '../../../i18n/locales/en/common.json';
-import zhCN from '../../../i18n/locales/zh-CN/common.json';
-import zhTW from '../../../i18n/locales/zh-TW/common.json';
-import ja from '../../../i18n/locales/ja/common.json';
-import ko from '../../../i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 
 describe('remote desktop settings copy survives file encoding', () => {
   it.each([
     ['en', en, /[A-Za-z]/u],
-    ['zh-CN', zhCN, /\p{Script=Han}/u],
-    ['zh-TW', zhTW, /\p{Script=Han}/u],
-    ['ja', ja, /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u],
-    ['ko', ko, /\p{Script=Hangul}/u],
+    ['fr', fr, /[A-Za-z]/u],
   ] as const)(
     '%s contains readable localized text, not replacement question marks',
     (_locale, catalog, letters) => {

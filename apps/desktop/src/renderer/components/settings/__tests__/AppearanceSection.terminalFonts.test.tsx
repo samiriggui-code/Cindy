@@ -2,9 +2,9 @@
 
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import fr from '@/i18n/locales/fr/common.json';
 import { FontSettingsProvider } from '@/hooks/useFontSettings';
 import { AppearanceSection } from '../AppearanceSection';
-import zhCN from '@/i18n/locales/zh-CN/common.json';
 import appearanceSearch from '../AppearanceSection.settings-search';
 
 vi.mock('react-i18next', () => ({
@@ -17,7 +17,7 @@ vi.mock('react-i18next', () => ({
             current && typeof current === 'object'
               ? (current as Record<string, unknown>)[part]
               : undefined,
-          zhCN,
+          fr,
         );
       return typeof value === 'string' ? value : key;
     },
@@ -97,64 +97,64 @@ describe('AppearanceSection terminal fonts', () => {
       );
       expect(entry).toBeDefined();
       expect(document.getElementById(entry!.targetId)?.textContent).toContain(
-        key === 'terminalFamily' ? '终端字体' : '终端字号',
+        key === 'terminalFamily' ? 'Police du terminal' : 'Taille de la police du terminal',
       );
     }
   });
 
   it('reuses custom font entry and keeps terminal and code font selections independent', () => {
     renderSettings();
-    const terminalPicker = screen.getByRole('button', { name: '选择终端字体' });
-    const codePicker = screen.getByRole('button', { name: '选择代码字体' });
+    const terminalPicker = screen.getByRole('button', { name: 'Sélectionnez la police du terminal' });
+    const codePicker = screen.getByRole('button', { name: 'Sélectionnez la police du code' });
 
     fireEvent.click(terminalPicker);
-    fireEvent.change(screen.getByPlaceholderText(zhCN.settings.appearance.font.customPlaceholder), {
+    fireEvent.change(screen.getByPlaceholderText(fr.settings.appearance.font.customPlaceholder), {
       target: { value: 'Menlo' },
     });
     fireEvent.click(
-      screen.getByRole('button', { name: zhCN.settings.appearance.font.applyCustom }),
+      screen.getByRole('button', { name: fr.settings.appearance.font.applyCustom }),
     );
 
     expect(terminalPicker.textContent).toBe('Menlo');
-    expect(codePicker.textContent).toBe('Codex 风格（默认）');
+    expect(codePicker.textContent).toBe('Style du Codex (par défaut)');
     expect(
-      screen.queryByPlaceholderText(zhCN.settings.appearance.font.customPlaceholder),
+      screen.queryByPlaceholderText(fr.settings.appearance.font.customPlaceholder),
     ).toBeNull();
 
     fireEvent.click(codePicker);
-    fireEvent.change(screen.getByPlaceholderText(zhCN.settings.appearance.font.customPlaceholder), {
+    fireEvent.change(screen.getByPlaceholderText(fr.settings.appearance.font.customPlaceholder), {
       target: { value: 'Consolas' },
     });
     fireEvent.click(
-      screen.getByRole('button', { name: zhCN.settings.appearance.font.applyCustom }),
+      screen.getByRole('button', { name: fr.settings.appearance.font.applyCustom }),
     );
     expect(codePicker.textContent).toBe('Consolas');
     expect(terminalPicker.textContent).toBe('Menlo');
 
     fireEvent.click(
-      within(terminalPicker.parentElement!).getByRole('button', { name: '恢复默认' }),
+      within(terminalPicker.parentElement!).getByRole('button', { name: 'Réinitialiser aux valeurs par défaut' }),
     );
-    expect(terminalPicker.textContent).toBe('等宽字体（默认）');
+    expect(terminalPicker.textContent).toBe('Monospace (par défaut)');
     expect(codePicker.textContent).toBe('Consolas');
   });
 
   it('applies the existing JetBrains Mono preset only to the terminal', () => {
     renderSettings();
-    const terminalPicker = screen.getByRole('button', { name: '选择终端字体' });
+    const terminalPicker = screen.getByRole('button', { name: 'Sélectionnez la police du terminal' });
     fireEvent.click(terminalPicker);
     fireEvent.click(screen.getByRole('option', { name: 'JetBrains Mono' }));
 
     expect(terminalPicker.textContent).toBe('JetBrains Mono');
-    expect(screen.getByRole('button', { name: '选择代码字体' }).textContent).toBe(
-      'Codex 风格（默认）',
+    expect(screen.getByRole('button', { name: 'Sélectionnez la police du code' }).textContent).toBe(
+      'Style du Codex (par défaut)',
     );
     expect(document.documentElement.style.getPropertyValue('--app-font-code')).toBe('');
   });
 
   it('bounds terminal size input, supports slider keys and resets only the terminal size', () => {
     renderSettings();
-    const size = screen.getByRole('spinbutton', { name: '终端字号' }) as HTMLInputElement;
-    const slider = screen.getByRole('slider', { name: '调整终端字号' });
+    const size = screen.getByRole('spinbutton', { name: 'Taille de la police du terminal' }) as HTMLInputElement;
+    const slider = screen.getByRole('slider', { name: 'Ajuster la taille de la police du terminal' });
     expect(size.value).toBe('13');
 
     fireEvent.change(size, { target: { value: '30' } });
@@ -172,13 +172,13 @@ describe('AppearanceSection terminal fonts', () => {
     expect(size.value).toBe('11');
 
     fireEvent.click(
-      within(size.parentElement!.parentElement!).getByRole('button', { name: '恢复默认' }),
+      within(size.parentElement!.parentElement!).getByRole('button', { name: 'Réinitialiser aux valeurs par défaut' }),
     );
     expect(size.value).toBe('13');
-    expect((screen.getByRole('spinbutton', { name: '代码字号' }) as HTMLInputElement).value).toBe(
+    expect((screen.getByRole('spinbutton', { name: 'Taille de la police du code' }) as HTMLInputElement).value).toBe(
       '14',
     );
-    expect((screen.getByRole('spinbutton', { name: '界面字号' }) as HTMLInputElement).value).toBe(
+    expect((screen.getByRole('spinbutton', { name: "Taille de la police de l'interface utilisateur" }) as HTMLInputElement).value).toBe(
       '14',
     );
   });

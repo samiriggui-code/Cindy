@@ -624,7 +624,7 @@ describe('GhostLibrarySlot', () => {
       return resolution;
     });
     expect(await slot.handleLibraryRequest(GHOST_ID, { op: 'open' })).toMatchObject({ ok: true, state: 'ready' });
-    ghosts.set(GHOST_ID, { ...ghost, manifest: { ...ghost.manifest, resolvedLocale: 'zh-CN' } });
+    ghosts.set(GHOST_ID, { ...ghost, manifest: { ...ghost.manifest, resolvedLocale: 'fr' } });
     expect(await slot.handleLibraryRequest(GHOST_ID, { op: 'db.open', dbPath: 'library.sqlite' })).toMatchObject({ ok: true });
     expect(createVault).toHaveBeenCalledTimes(1);
     expect(createSqlService).toHaveBeenCalledTimes(1);

@@ -2,11 +2,8 @@ import { AUTO_TITLE_MAX_CHARS } from '@cindy/maker-shared/session-title';
 import type { SupportedLocale } from '../../shared/locale.js';
 
 export const TITLE_LANGUAGE_BY_LOCALE: Record<SupportedLocale, string> = {
-  'zh-CN': 'Simplified Chinese',
-  'zh-TW': 'Traditional Chinese (繁體中文)',
   en: 'English',
-  ja: 'Japanese',
-  ko: 'Korean',
+  fr: 'French',
 };
 
 function escapeReferenceData(value: string): string {

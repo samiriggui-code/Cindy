@@ -3,6 +3,7 @@
 // or permission; the host's receipt validator still consumes the original bytes.
 const DIALECTS = [
   ['[Source] ', 'User’s original words:', 'Agent supplement:', '[Task source] ', 'Task ID:'],
+  ['[Source] ', 'Mots originaux de l’utilisateur :', 'Supplément agent :', '[Source de la tâche] ', 'ID de tâche :'],
   ['[来源] ', '用户原话：', 'Agent补充：', '[任务来源] ', '任务 ID：'],
   ['[来源] ', '用户原话：', 'agent补充：', '[任务来源] ', '任务 ID：'],
   ['[來源] ', '使用者原話：', 'Agent補充：', '[任務來源] ', '任務 ID：'],

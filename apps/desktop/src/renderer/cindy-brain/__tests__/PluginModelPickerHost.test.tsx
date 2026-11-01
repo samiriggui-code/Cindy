@@ -8,14 +8,14 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import type { ComponentProps } from 'react';
 import { PluginModelPickerHost } from '../PluginModelPickerHost';
 import type { PluginModelPickerPresentation } from '../../../shared/pluginModelPicker';
-import zh from '../../i18n/locales/zh-CN/common.json';
+import fr from '../../i18n/locales/fr/common.json';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, options?: { name?: string }) => {
       const value = key
         .split('.')
-        .reduce<unknown>((v, part) => (v as Record<string, unknown>)?.[part], zh);
+        .reduce<unknown>((v, part) => (v as Record<string, unknown>)?.[part], fr);
       return typeof value === 'string' ? value.replace('{{name}}', options?.name ?? '') : key;
     },
   }),
@@ -79,10 +79,10 @@ afterEach(cleanup);
 it('keeps the full configuration as a draft until the user confirms, then returns it to Host', async () => {
   render(<PluginModelPickerHost />);
   act(() => push(request));
-  expect(screen.getByText('为插件「示例插件」选择模型')).toBeTruthy();
+  expect(screen.getByText('Choisissez un modèle pour le plugin « 示例插件 »')).toBeTruthy();
   fireEvent.click(screen.getByText('Choose model'));
   expect(resolve).not.toHaveBeenCalled();
-  fireEvent.click(screen.getByRole('button', { name: zh.settings.ghosts.modelPicker.useConfiguration }));
+  fireEvent.click(screen.getByRole('button', { name: fr.settings.ghosts.modelPicker.useConfiguration }));
   await waitFor(() =>
     expect(resolve).toHaveBeenCalledExactlyOnceWith('request', {
       providerId: 'chosen-provider',
@@ -97,13 +97,13 @@ it('keeps the full configuration as a draft until the user confirms, then return
 it('returns cancellation without a model and removes the dialog on Host dismissal', async () => {
   render(<PluginModelPickerHost />);
   act(() => push(request));
-  fireEvent.click(screen.getByRole('button', { name: zh.commonUi.confirmDialog.cancel }));
+  fireEvent.click(screen.getByRole('button', { name: fr.commonUi.confirmDialog.cancel }));
   await waitFor(() => expect(resolve).toHaveBeenCalledExactlyOnceWith('request', null));
   act(() => dismiss({ requestId: 'request' }));
-  await waitFor(() => expect(screen.queryByText('为插件「示例插件」选择模型')).toBeNull());
+  await waitFor(() => expect(screen.queryByText('Choisissez un modèle pour le plugin « 示例插件 »')).toBeNull());
   // A late remote poll must not reopen a picker the Host has already settled.
   act(() => push(request));
-  expect(screen.queryByText('为插件「示例插件」选择模型')).toBeNull();
+  expect(screen.queryByText('Choisissez un modèle pour le plugin « 示例插件 »')).toBeNull();
 });
 
 it('keeps the choice editable and reports an unavailable source after Host rejects it', async () => {
@@ -111,8 +111,8 @@ it('keeps the choice editable and reports an unavailable source after Host rejec
   render(<PluginModelPickerHost />);
   act(() => push(request));
   fireEvent.click(screen.getByText('Choose model'));
-  fireEvent.click(screen.getByRole('button', { name: zh.settings.ghosts.modelPicker.useConfiguration }));
-  await screen.findByText(zh.settings.ghosts.modelPicker.unavailable);
+  fireEvent.click(screen.getByRole('button', { name: fr.settings.ghosts.modelPicker.useConfiguration }));
+  await screen.findByText(fr.settings.ghosts.modelPicker.unavailable);
   expect(screen.getByText('Choose model')).toBeTruthy();
 });
 
@@ -120,7 +120,7 @@ it('returns remote selections through the original view without calling local pl
   render(<PluginModelPickerHost />);
   act(() => push({ ...request, deviceId: 'other-computer', remoteViewId: 'remote-view' }));
   fireEvent.click(screen.getByText('Choose model'));
-  fireEvent.click(screen.getByRole('button', { name: zh.settings.ghosts.modelPicker.useConfiguration }));
+  fireEvent.click(screen.getByRole('button', { name: fr.settings.ghosts.modelPicker.useConfiguration }));
   await waitFor(() =>
     expect(remote).toHaveBeenCalledWith(
       'remote-view',
@@ -145,6 +145,6 @@ it('keeps the active picker when another execution computer asks for a selection
   await waitFor(() =>
     expect(remote).toHaveBeenCalledExactlyOnceWith('remote-view', 'second', null),
   );
-  expect(screen.getByText('为插件「示例插件」选择模型')).toBeTruthy();
+  expect(screen.getByText('Choisissez un modèle pour le plugin « 示例插件 »')).toBeTruthy();
   expect(screen.queryByText('Other plugin')).toBeNull();
 });

@@ -10,12 +10,9 @@ import type {
 } from '../../../../shared/billing';
 
 import en from '../../../i18n/locales/en/common.json';
-import ja from '../../../i18n/locales/ja/common.json';
-import ko from '../../../i18n/locales/ko/common.json';
-import zhCN from '../../../i18n/locales/zh-CN/common.json';
-import zhTW from '../../../i18n/locales/zh-TW/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 
-const invoiceLocales = { en, ja, ko, 'zh-CN': zhCN, 'zh-TW': zhTW };
+const invoiceLocales = { en, fr };
 
 const i18n = createInstance();
 void i18n.init({
@@ -486,7 +483,7 @@ describe('BillingPage remote catalog rendering', () => {
   });
 
   it('shows current plan price, included credits, status, and renewal date', async () => {
-    i18n.resolvedLanguage = 'ja';
+    i18n.resolvedLanguage = 'fr';
     window.electronAPI.billing.getCurrentSubscription = vi.fn(async () => ({
       subscription: {
         subscriptionId: 'subscription_fixture',
@@ -522,7 +519,7 @@ describe('BillingPage remote catalog rendering', () => {
       ),
     ).toBeTruthy();
     expect(
-      screen.getByText('billing.settings.subscriptionCard.renewsAt:{"date":"2026/08/01"}'),
+      screen.getByText('billing.settings.subscriptionCard.renewsAt:{"date":"1 août 2026"}'),
     ).toBeTruthy();
     await openSubscriptionManagementMenu();
     expect(
@@ -3335,11 +3332,6 @@ describe('BillingPage order history', () => {
         /<\/?strong>/g,
         '',
       );
-      if (locale === 'zh-CN') {
-        expect(policy).toBe(
-          'Cindy 个人版充值默认开具个人抬头发票，抬头可填写姓名或“个人”。如需开具企业抬头发票用于公司报销，请提供加盖公司公章的报销说明，并在说明中注明开票抬头。',
-        );
-      }
 
       render(<BillingPage />);
       fireEvent.click(await screen.findByRole('button', { name: 'billing.orders.invoice.action' }));
@@ -3348,11 +3340,6 @@ describe('BillingPage order history', () => {
         (_, element) => element?.tagName === 'P' && element.textContent === policy,
       );
       expect(policyParagraph.querySelectorAll('strong')).toHaveLength(2);
-      if (locale === 'zh-CN') {
-        expect(
-          Array.from(policyParagraph.querySelectorAll('strong'), (node) => node.textContent),
-        ).toEqual(['个人抬头发票', '加盖公司公章的报销说明']);
-      }
       fireEvent.click(screen.getByRole('button', { name: 'billing.orders.invoice.sendAction' }));
 
       await waitFor(() => expect(openExternal).toHaveBeenCalledTimes(2));
@@ -3367,11 +3354,6 @@ describe('BillingPage order history', () => {
       expect(titlePosition).toBeGreaterThan(body!.indexOf('o-company-reimbursement'));
       expect(hintPosition).toBeGreaterThan(titlePosition);
       expect(hintPosition).toBeLessThan(body!.indexOf(fields.contact));
-      if (locale === 'zh-CN') {
-        expect(body).toContain(
-          '发票抬头：\n填写说明：个人抬头请填写姓名或“个人”；如需企业抬头用于公司报销，请随邮件附上加盖公司公章、注明开票抬头的报销说明。',
-        );
-      }
       expect(body).toContain('o-company-reimbursement');
       expect(body).not.toContain('{{');
       expect(body).not.toContain('<strong>');

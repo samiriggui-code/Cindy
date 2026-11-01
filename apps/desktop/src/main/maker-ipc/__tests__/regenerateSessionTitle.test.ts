@@ -375,10 +375,8 @@ describe('regenerateMakerSessionTitle', () => {
   });
 
   it.each([
-    ['zh-CN', 'Simplified Chinese'],
+    ['fr', 'French'],
     ['en', 'English'],
-    ['ja', 'Japanese'],
-    ['ko', 'Korean'],
   ] as const)('界面语言 %s → regenerate prompt 明确要求 %s 标题', async (locale, language) => {
     vi.mocked(getResolvedMainLocale).mockReturnValue(locale);
     const deps = makeDeps();
@@ -415,10 +413,8 @@ describe('generateMakerSessionTitle', () => {
   });
 
   it.each([
-    ['zh-CN', 'Simplified Chinese'],
+    ['fr', 'French'],
     ['en', 'English'],
-    ['ja', 'Japanese'],
-    ['ko', 'Korean'],
   ] as const)('界面语言 %s → auto-title prompt 明确要求 %s 标题', async (locale, language) => {
     vi.mocked(getResolvedMainLocale).mockReturnValue(locale);
     vi.mocked(generateTitleWithAuxiliaryModel).mockClear();

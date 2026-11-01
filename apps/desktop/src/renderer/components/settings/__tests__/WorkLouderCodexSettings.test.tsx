@@ -3,11 +3,8 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createInstance } from 'i18next';
-import zhCN from '../../../i18n/locales/zh-CN/common.json';
-import zhTW from '../../../i18n/locales/zh-TW/common.json';
 import en from '../../../i18n/locales/en/common.json';
-import ja from '../../../i18n/locales/ja/common.json';
-import ko from '../../../i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 
 beforeAll(() => {
   vi.stubGlobal('ResizeObserver', class { observe() {} unobserve() {} disconnect() {} });
@@ -362,11 +359,8 @@ describe('WorkLouderCodexSettings', () => {
   );
 
   it.each([
-    ['zh-CN', zhCN],
-    ['zh-TW', zhTW],
     ['en', en],
-    ['ja', ja],
-    ['ko', ko],
+    ['fr', fr],
   ] as const)(
     'renders the real %s pause and recovery copy without falling back to a key',
     async (locale, catalog) => {
@@ -380,13 +374,12 @@ describe('WorkLouderCodexSettings', () => {
       mocks.guardStatus = 'paused';
       const copy = catalog.settings.shortcuts.workLouderCodex.codexGuard;
       const { rerender } = render(<WorkLouderCodexSettings onBack={vi.fn()} />);
-      const text = screen.getByText(copy.descriptions.paused).textContent!;
+      const text = screen.getByText(copy.descriptions.paused, { normalizer: (value) => value }).textContent!;
       expect(text).not.toContain('?');
-      if (locale === 'zh-CN') expect(text).toContain('已暂停');
       expect(screen.getByRole('switch', { name: copy.aria }).hasAttribute('disabled')).toBe(true);
       mocks.guardStatus = 'recovery-required';
       rerender(<WorkLouderCodexSettings onBack={vi.fn()} />);
-      expect(screen.getByText(copy.descriptions['recovery-required'])).toBeTruthy();
+      expect(screen.getByText(copy.descriptions['recovery-required'], { normalizer: (value) => value })).toBeTruthy();
       expect(screen.getByRole('button', { name: copy.recover })).toBeTruthy();
     },
   );

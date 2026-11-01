@@ -110,14 +110,14 @@ describe('buildMenubarView', () => {
       kind: 'balance', id: 'cindy', logoSvg: MENUBAR_CINDY_LOGO, available: 19_996.38, fullAmount: 20_000,
       burnPerDay: null, observedAtMs: NOW, currency: 'USD', quota: { resetsAtMs: NOW + 20 * DAY + 3 * HOUR, todaySpend: 3.62, dailyLimitEnabled },
     };
-    const view = buildMenubarView(input([quota], { locale: 'zh-CN' }));
-    expect(view.sources[0]).toMatchObject({ when: '20天3时后重置' });
+    const view = buildMenubarView(input([quota], { locale: 'fr' }));
+    expect(view.sources[0]).toMatchObject({ when: 'Réinitialisation en 20j 3h' });
     expect(view.sources[0].fill).toBeCloseTo(0.9998);
-    expect(view.headlinePrimary).toBe('Cindy 本期配额还能用。');
-    expect(view.details.cindy).toMatchObject({ title: 'Cindy 本期配额', action: { kind: 'open-settings' } });
-    const dailyFact = view.details.cindy.facts.find(fact => fact.label === '今日已用');
+    expect(view.headlinePrimary).toBe('Votre quota Cindy a encore de la place.');
+    expect(view.details.cindy).toMatchObject({ title: 'Quota de Cindy', action: { kind: 'open-settings' } });
+    const dailyFact = view.details.cindy.facts.find(fact => fact.label === "Dépensé aujourd'hui");
     if (dailyLimitEnabled === false) expect(dailyFact).toBeUndefined();
-    else expect(dailyFact).toEqual({ label: '今日已用', value: '$3.62', sub: '每日建议 $3,000 以内' });
+    else expect(dailyFact).toEqual({ label: "Dépensé aujourd'hui", value: '$3.62', sub: 'Proposé à moins de $3,000 par jour' });
   });
 
   it('splits a wallet into its pools and names the gift that expires first', () => {
@@ -183,8 +183,8 @@ describe('buildMenubarView', () => {
         { kind: 'week', usedPercent: 10, resetsAtMs: NOW + 6 * DAY + 7 * HOUR + 30 * 60_000, windowMinutes: 10_080 },
       ],
     });
-    const view = buildMenubarView(input([claude], { locale: 'zh-CN' }));
-    expect(view.sources[0]).toMatchObject({ value: '90', when: '6天7时后重置', whenLevel: 'normal' });
+    const view = buildMenubarView(input([claude], { locale: 'fr' }));
+    expect(view.sources[0]).toMatchObject({ value: '90', when: 'Réinitialisation en 6j 7h', whenLevel: 'normal' });
     // Plenty left: the headline does not narrate a reset.
     expect(view.headlineSecondary).toBeNull();
   });
@@ -210,8 +210,8 @@ describe('buildMenubarView', () => {
   });
 
   it('localizes the headline', () => {
-    const view = buildMenubarView(input([codex('alpha', 80), codex('beta', 20)], { locale: 'zh-CN' }));
-    expect(view.headlinePrimary).toBe('beta 余量最足。');
+    const view = buildMenubarView(input([codex('alpha', 80), codex('beta', 20)], { locale: 'fr' }));
+    expect(view.headlinePrimary).toBe('Il en reste beta.');
   });
 });
 
@@ -247,8 +247,8 @@ describe('menubar strings', () => {
   });
 
   it('never takes a fallback-locale singular for locales without one', () => {
-    const raw = (key: string) => rawMainString(key, 'zh-CN');
-    const strings = buildMenubarUiStrings(mainStringKeysUnder('menubar.ui'), raw, 'zh-CN');
+    const raw = (key: string) => rawMainString(key, 'fr');
+    const strings = buildMenubarUiStrings(mainStringKeysUnder('menubar.ui'), raw, 'fr');
     expect(strings.updatedMinutes_one).toBe(strings.updatedMinutes_other);
     expect(strings.updatedMinutes_one).not.toMatch(/Updated/);
   });

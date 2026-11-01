@@ -10,7 +10,7 @@ afterEach(() => setMainLocale('en'));
 
 describe('review follow-up text', () => {
   it('summarizes the review scope instead of exposing the model prompt', () => {
-    setMainLocale('zh-CN');
+    setMainLocale('fr');
     expect(buildReviewInputSummary({
       workingDir: '/work/client',
       baseRef: 'origin/main',
@@ -19,22 +19,22 @@ describe('review follow-up text', () => {
       artifactCount: 2,
       focus: '  检查\n删除流程  ',
     })).toBe([
-      '独立审查（只读，无开发记忆）',
-      '目录：/work/client · 对比 origin/main · 包含未提交修改',
-      '另含：/work/server',
-      '成果：2 项',
-      '关注：检查 删除流程',
+      'Examen indépendant (lecture seule, pas de mémoire de développement)',
+      'Répertoire : /work/client · par rapport à origin/main · inclut les modifications non validées',
+      'Aussi : /work/server',
+      'Artefacts : 2',
+      'Mise au point : 检查 删除流程',
     ].join('\n'));
   });
 
   it('names repositories the review could not cover', () => {
-    setMainLocale('zh-CN');
+    setMainLocale('fr');
     expect(buildReviewInputSummary({
       workingDir: '/work/client',
       uncoveredWorkingDirs: ['/work/a', '/work/b'],
       uncheckedTaskDirs: 3,
       artifactCount: 0,
-    }).split('\n').slice(2)).toEqual(['未覆盖：/work/a, /work/b', '另有 3 个任务目录未检查']);
+    }).split('\n').slice(2)).toEqual(['Non couvert : /work/a, /work/b', "3 autres répertoires de tâches n'ont pas été vérifiés"]);
   });
 
   it('falls back to a task-goal review line without a directory', () => {

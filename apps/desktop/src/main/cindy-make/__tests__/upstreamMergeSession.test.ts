@@ -113,24 +113,12 @@ describe('dedicated upstream merge session', () => {
       ],
     },
     {
-      locale: 'zh-CN',
-      titles: ['处理源码更新冲突', '处理合入冲突', '处理撤销合入冲突'],
-    },
-    {
-      locale: 'zh-TW',
-      titles: ['處理原始碼更新衝突', '處理合入衝突', '處理撤銷合入衝突'],
-    },
-    {
-      locale: 'ja',
+      locale: 'fr',
       titles: [
-        'ソース更新時の競合を解決',
-        '取り込み時の競合を解決',
-        '取り込み取り消し時の競合を解決',
+        'Résoudre les conflits de mise à jour de source',
+        "Résoudre les conflits d'intégration",
+        "Résoudre les conflits d'annulation d'intégration",
       ],
-    },
-    {
-      locale: 'ko',
-      titles: ['소스 업데이트 충돌 해결', '반영 충돌 해결', '반영 취소 충돌 해결'],
     },
   ] as const)(
     'creates localized conflict titles with their local creation time in $locale',
@@ -166,7 +154,7 @@ describe('dedicated upstream merge session', () => {
     },
   );
   it('asks the resolver to keep both computers’ changes when combining with GitHub', async () => {
-    setMainLocale('zh-CN');
+    setMainLocale('fr');
     await ensureUpstreamMergeSession(
       userData,
       { ...state, strategy: 'combine', ref: 'github', remote: { base: 'e'.repeat(40) } },
@@ -175,7 +163,7 @@ describe('dedicated upstream merge session', () => {
       () => true,
     );
     expect(h.insert).toHaveBeenLastCalledWith(
-      expect.objectContaining({ title: '09-20 14:07 合并两台电脑的修改' }),
+      expect.objectContaining({ title: '09-20 14:07 Combiner les modifications de deux ordinateurs' }),
     );
     const prompt = String(h.dispatch.mock.calls.at(-1)?.[1]);
     expect(prompt).toContain('两边的功能都不能丢');

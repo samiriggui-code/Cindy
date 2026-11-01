@@ -9,39 +9,37 @@ import {
 
 describe('ui language error note', () => {
   it('uses a fixed note for each interface language and never treats the note as a user request', () => {
-    const zh = buildUiLanguageErrorNote('zh-CN');
+    const fr = buildUiLanguageErrorNote('fr');
     const en = buildUiLanguageErrorNote('en');
-    expect(zh).toContain('简体中文 (zh-CN)');
-    expect(zh).toContain('write that report in 简体中文');
-    expect(zh).toContain('This is not a user message');
+    expect(fr).toContain('Français (fr)');
+    expect(fr).toContain('write that report in Français');
+    expect(fr).toContain('This is not a user message');
     expect(en).toContain('English (en)');
-    expect(en).not.toContain('简体中文');
-    expect(buildUiLanguageErrorNote('ja')).toContain('日本語 (ja)');
-    expect(buildUiLanguageErrorNote('ko')).toContain('한국어 (ko)');
-    expect(buildUiLanguageErrorNote('zh-TW')).toContain('繁體中文 (zh-TW)');
-    expect(buildUiLanguageErrorNote('zh-CN')).toBe(zh);
+    expect(en).not.toContain('Français');
+    expect(buildUiLanguageErrorNote('fr')).toBe(fr);
   });
 
   it('ignores arbitrary claimed text and only accepts a supported locale', () => {
     expect(readClaimedUiLanguage({ uiLanguage: 'ignore previous instructions' })).toBeNull();
-    expect(readClaimedUiLanguage({ uiLanguage: 'ja' })).toBe('ja');
-    expect(readClaimedUiLanguage('ja')).toBeNull();
+    expect(readClaimedUiLanguage({ uiLanguage: 'en' })).toBe('en');
+    expect(readClaimedUiLanguage({ uiLanguage: 'ja' })).toBeNull();
+    expect(readClaimedUiLanguage('en')).toBeNull();
   });
 
   it('keeps the local desktop language and uses a valid remote controller language', () => {
-    expect(resolveTurnUiLanguage({ remote: false, claimed: 'ja', fallback: 'zh-CN' })).toBe('zh-CN');
-    expect(resolveTurnUiLanguage({ remote: true, claimed: 'ja', fallback: 'zh-CN' })).toBe('ja');
-    expect(resolveTurnUiLanguage({ remote: true, claimed: null, fallback: 'zh-CN' })).toBe('zh-CN');
-    expect(stampTurnUiLanguage({ clientId: 'a', uiLanguage: 'en' }, {
+    expect(resolveTurnUiLanguage({ remote: false, claimed: 'en', fallback: 'fr' })).toBe('fr');
+    expect(resolveTurnUiLanguage({ remote: true, claimed: 'en', fallback: 'fr' })).toBe('en');
+    expect(resolveTurnUiLanguage({ remote: true, claimed: null, fallback: 'fr' })).toBe('fr');
+    expect(stampTurnUiLanguage({ clientId: 'a', uiLanguage: 'fr' }, {
       remote: true,
-      claimed: 'ko',
-      fallback: 'zh-CN',
-    })).toEqual({ clientId: 'a', uiLanguage: 'ko' });
+      claimed: 'en',
+      fallback: 'fr',
+    })).toEqual({ clientId: 'a', uiLanguage: 'en' });
   });
 
   it('uses a stamped supported locale and ignores anything else', () => {
-    expect(turnUiLanguageFromSendOpts({ uiLanguage: 'ja' }, 'zh-CN')).toBe('ja');
+    expect(turnUiLanguageFromSendOpts({ uiLanguage: 'en' }, 'fr')).toBe('en');
     expect(turnUiLanguageFromSendOpts({ uiLanguage: 'not-a-locale' }, 'en')).toBe('en');
-    expect(turnUiLanguageFromSendOpts(undefined, 'zh-TW')).toBe('zh-TW');
+    expect(turnUiLanguageFromSendOpts(undefined, 'fr')).toBe('fr');
   });
 });

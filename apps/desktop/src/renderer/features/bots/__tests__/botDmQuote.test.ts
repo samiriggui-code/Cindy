@@ -5,7 +5,7 @@ import { formatForwardedRequest } from '../../../../shared/forwardedRequest';
 // Unit: reply previews/live originals re-exposed serialized paragraph escapes.
 // These production quote entry points had no forwarded-message coverage.
 describe('forwarded companion reply quotes', () => {
-  const content = formatForwardedRequest({ userText: '只检查' }, '第一段\n\n第二段，保留 `\\n`', 'zh-CN');
+  const content = formatForwardedRequest({ userText: '只检查' }, '第一段\n\n第二段，保留 `\\n`', 'fr');
   const message = { clientId: 'forwarded', role: 'user' as const, content,
     automationOrigin: { kind: 'session' as const, senderSessionId: 'sender' } };
   const names = { owner: 'Chris', companion: 'Cindy' };

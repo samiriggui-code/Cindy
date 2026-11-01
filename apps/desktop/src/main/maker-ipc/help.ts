@@ -68,11 +68,8 @@ const ACTION_TAG_RE = /<action\s+tab="([a-z-]+)"\s*\/?>/i;
 const ACTION_TAG_STRIP_RE = /<action\s+tab="[a-z-]+"\s*\/?>/gi;
 
 const LOCALE_NAME: Record<HelpLocale, string> = {
-  'zh-CN': 'Simplified Chinese',
-  'zh-TW': 'Traditional Chinese',
   en: 'English',
-  ja: 'Japanese',
-  ko: 'Korean',
+  fr: 'French',
 };
 
 type HelpOneShotTarget = {
@@ -107,9 +104,7 @@ async function isHelpSessionAgentDispatchAllowed(
 }
 
 function normalizeLocale(locale: unknown): HelpLocale {
-  return locale === 'zh-CN' || locale === 'zh-TW' || locale === 'en' || locale === 'ja' || locale === 'ko'
-    ? locale
-    : 'en';
+  return locale === 'en' || locale === 'fr' ? locale : 'en';
 }
 
 function renderTranscript(history: HelpMessage[]): string {

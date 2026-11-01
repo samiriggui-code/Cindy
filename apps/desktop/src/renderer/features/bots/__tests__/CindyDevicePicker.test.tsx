@@ -4,11 +4,8 @@ import { createInstance } from 'i18next';
 import { I18nextProvider } from 'react-i18next';
 import { afterAll, beforeAll, afterEach, describe, expect, it, vi } from 'vitest';
 
-import zhCN from '@/i18n/locales/zh-CN/common.json';
-import zhTW from '@/i18n/locales/zh-TW/common.json';
 import en from '@/i18n/locales/en/common.json';
-import ja from '@/i18n/locales/ja/common.json';
-import ko from '@/i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 
 vi.mock('../botStore', () => ({ useBotProfiles: () => [], useBotUnreadCounts: () => ({}) }));
 vi.mock('../useRemoteBots', () => ({ useRemoteBots: () => [] }));
@@ -212,11 +209,8 @@ it.each([true, false])(
 
 describe('Cindy device menu with real translations', () => {
   it.each([
-    ['zh-CN', zhCN, '本机'],
-    ['zh-TW', zhTW, '本機'],
     ['en', en, 'This Device'],
-    ['ja', ja, 'この端末'],
-    ['ko', ko, '이 기기'],
+    ['fr', fr, 'Cet appareil'],
   ] as const)('renders usable %s labels and keyboard switching', async (lng, common, label) => {
     const i18n = createInstance();
     await i18n.init({

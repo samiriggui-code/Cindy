@@ -22,17 +22,11 @@ import {
 } from '../shared/locale.js';
 
 import enCommon from '../renderer/i18n/locales/en/common.json';
-import zhCNCommon from '../renderer/i18n/locales/zh-CN/common.json';
-import zhTWCommon from '../renderer/i18n/locales/zh-TW/common.json';
-import jaCommon from '../renderer/i18n/locales/ja/common.json';
-import koCommon from '../renderer/i18n/locales/ko/common.json';
+import frCommon from '../renderer/i18n/locales/fr/common.json';
 
 const resources: Record<SupportedLocale, Record<string, unknown>> = {
   en: enCommon as Record<string, unknown>,
-  'zh-CN': zhCNCommon as Record<string, unknown>,
-  'zh-TW': zhTWCommon as Record<string, unknown>,
-  ja: jaCommon as Record<string, unknown>,
-  ko: koCommon as Record<string, unknown>,
+  fr: frCommon as Record<string, unknown>,
 };
 
 /**
@@ -40,11 +34,8 @@ const resources: Record<SupportedLocale, Record<string, unknown>> = {
  * 链尾统一由 t() 落回 key 本身。
  */
 const FALLBACK_CHAIN: Record<SupportedLocale, readonly SupportedLocale[]> = {
-  'zh-CN': ['zh-CN', 'en'],
-  'zh-TW': ['zh-TW', 'zh-CN', 'en'],
   en: ['en'],
-  ja: ['ja', 'en'],
-  ko: ['ko', 'en'],
+  fr: ['fr', 'en'],
 };
 
 let cachedLocale: SupportedLocale | null = null;

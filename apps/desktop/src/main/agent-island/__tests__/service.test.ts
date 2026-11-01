@@ -2436,10 +2436,10 @@ describe('AgentIslandService native publishing', () => {
     // 固化进 state,这里会一直停在上一语言,直到下一次 metadata 事件(PR #1031 review P1)。
     {
       const { setMainLocale } = await import('../../i18n.js');
-      setMainLocale('zh-CN');
+      setMainLocale('fr');
       service.refreshLocalization();
       await vi.waitFor(() => expect(publish.mock.calls.at(-1)?.[0].sessions[0]).toMatchObject({
-        title: '未命名任务',
+        title: 'Séance sans titre',
       }));
       setMainLocale('en');
       service.refreshLocalization();

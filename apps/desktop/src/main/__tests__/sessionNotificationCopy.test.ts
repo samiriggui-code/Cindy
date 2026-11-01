@@ -28,26 +28,15 @@ const CASES: Array<{
   externalNeedsReply: string;
 }> = [
   {
-    locale: 'zh-CN',
-    title: '整理报告',
-    untitled: '未命名任务',
-    done: '已完成 ✓',
-    error: '执行失败',
-    needsReply: '需要你回复',
-    externalDone: 'Cindy · 任务「整理报告」已完成 ✓',
-    externalError: 'Cindy · 任务「整理报告」执行失败',
-    externalNeedsReply: 'Cindy · 任务「整理报告」需要你回复',
-  },
-  {
-    locale: 'zh-TW',
-    title: '整理報告',
-    untitled: '未命名任務',
-    done: '已完成 ✓',
-    error: '執行失敗',
-    needsReply: '需要你回覆',
-    externalDone: 'Cindy · 任務「整理報告」已完成 ✓',
-    externalError: 'Cindy · 任務「整理報告」執行失敗',
-    externalNeedsReply: 'Cindy · 任務「整理報告」需要你回覆',
+    locale: 'fr',
+    title: 'Rapport',
+    untitled: 'Séance sans titre',
+    done: 'Terminé ✓',
+    error: 'Échec',
+    needsReply: 'Réponse nécessaire',
+    externalDone: 'Cindy · Séance « Rapport » terminée ✓',
+    externalError: 'Cindy · La session « Rapport » a échoué',
+    externalNeedsReply: 'Cindy · La session « Rapport » a besoin de votre réponse',
   },
   {
     locale: 'en',
@@ -59,28 +48,6 @@ const CASES: Array<{
     externalDone: 'Cindy · Session “Report” completed ✓',
     externalError: 'Cindy · Session “Report” failed',
     externalNeedsReply: 'Cindy · Session “Report” needs your reply',
-  },
-  {
-    locale: 'ja',
-    title: 'レポート',
-    untitled: '無題のセッション',
-    done: '完了しました ✓',
-    error: '実行に失敗しました',
-    needsReply: '返信が必要です',
-    externalDone: 'Cindy · セッション「レポート」が完了しました ✓',
-    externalError: 'Cindy · セッション「レポート」の実行に失敗しました',
-    externalNeedsReply: 'Cindy · セッション「レポート」への返信が必要です',
-  },
-  {
-    locale: 'ko',
-    title: '보고서',
-    untitled: '제목 없는 세션',
-    done: '완료됨 ✓',
-    error: '실행 실패',
-    needsReply: '답변이 필요합니다',
-    externalDone: 'Cindy · 세션 “보고서” 완료됨 ✓',
-    externalError: 'Cindy · 세션 “보고서” 실행 실패',
-    externalNeedsReply: 'Cindy · 세션 “보고서”에 답변이 필요합니다',
   },
 ];
 
@@ -102,8 +69,8 @@ describe('session notification copy', () => {
   it('运行时切换语言后下一条通知立即跟随', () => {
     setMainLocale('en');
     expect(getSessionNotificationBody('needs-reply')).toBe('Reply needed');
-    setMainLocale('zh-TW');
-    expect(getSessionNotificationBody('needs-reply')).toBe('需要你回覆');
+    setMainLocale('fr');
+    expect(getSessionNotificationBody('needs-reply')).toBe('Réponse nécessaire');
   });
 
   it.each(['foo$&bar', 'foo$`bar', "foo$'bar", 'foo$$bar'])(
@@ -125,7 +92,7 @@ describe('session notification copy', () => {
 
 
 it.each([
-  ['en', 'New reply'], ['zh-CN', '有新回复'], ['zh-TW', '有新回覆'], ['ja', '新しい返信'], ['ko', '새 답장'],
+  ['en', 'New reply'], ['fr', 'Nouvelle réponse'],
 ] as const)('uses the current %s locale for a reply with no preview', (locale, expected) => {
   setMainLocale(locale);
   expect(getTeammateNotificationFallback()).toBe(expected);

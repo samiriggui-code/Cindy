@@ -5,10 +5,7 @@ import type { ReactElement, ReactNode } from 'react';
 
 import { ForgeOidcInstallConfirmHost } from '../ForgeOidcInstallConfirmHost';
 import enCommon from '../../i18n/locales/en/common.json';
-import jaCommon from '../../i18n/locales/ja/common.json';
-import koCommon from '../../i18n/locales/ko/common.json';
-import zhCNCommon from '../../i18n/locales/zh-CN/common.json';
-import zhTWCommon from '../../i18n/locales/zh-TW/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 
 const mocks = vi.hoisted(() => ({ confirm: vi.fn() }));
 
@@ -92,11 +89,8 @@ describe('ForgeOidcInstallConfirmHost', () => {
   });
 
   it.each([
-    ['zh-CN', zhCNCommon],
-    ['zh-TW', zhTWCommon],
     ['en', enCommon],
-    ['ja', jaCommon],
-    ['ko', koCommon],
+    ['fr', fr],
   ])('%s 的手输提示用加粗 id 且不再用引号包裹', (_locale, common) => {
     const label = common.settings.ghosts.forgeOidcInstallConfirm.typedIdLabel;
     // 直接读每个 locale，排除缺 key 后被英文 fallback 掩盖。

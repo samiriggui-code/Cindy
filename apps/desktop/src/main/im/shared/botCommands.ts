@@ -283,9 +283,7 @@ export const OFFICIAL_BOT_COMMAND_MENU_LOCALES: ReadonlyArray<{
   locale: SupportedLocale;
 }> = [
   { languageCode: null, locale: 'en' },
-  { languageCode: 'zh', locale: 'zh-CN' },
-  { languageCode: 'ja', locale: 'ja' },
-  { languageCode: 'ko', locale: 'ko' },
+  { languageCode: 'fr', locale: 'fr' },
 ];
 
 export function buildOfficialBotCommandMenus(

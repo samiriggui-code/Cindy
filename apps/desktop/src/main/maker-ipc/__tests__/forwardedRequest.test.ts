@@ -14,11 +14,8 @@ describe('host-owned forwarded request', () => {
   // Locale regression: host output previously stayed Chinese for every UI language.
   // unit: capture with the real host locale, then verify exact authored bytes and cross-locale receipt validation.
   it.each([
-    ['zh-CN', '用户原话：', 'Agent补充：'],
-    ['zh-TW', '使用者原話：', 'Agent補充：'],
+    ['fr', 'Mots originaux de l’utilisateur :', 'Supplément agent :'],
     ['en', 'User’s original words:', 'Agent supplement:'],
-    ['ja', 'ユーザーの原文：', 'Agent の補足：'],
-    ['ko', '사용자 원문:', 'Agent 보충:'],
   ] as const)('keeps accepted text verbatim with %s host labels', async (locale, userPrefix, agentPrefix) => {
     setMainLocale(locale);
     const original = `  只检查，不发布。\n"保持原样" ${'长'.repeat(2500)}  `;
@@ -132,7 +129,7 @@ describe('host-owned forwarded request', () => {
 describe('forwarded request display', () => {
   const original = '  只检查\n"不要发布"  ';
   const supplement = '第一段\n\n1. 保留代码 `\\n`\n2. 路径 C:\\new\\test\n用户原话：这是补充中的文本';
-  it.each(['en', 'zh-CN', 'zh-TW', 'ja', 'ko'] as const)('decodes %s once without changing receipts or authored escapes', locale => {
+  it.each(['fr', 'en'] as const)('decodes %s once without changing receipts or authored escapes', locale => {
     const source = { userText: original, sessionId: 'owner', clientId: 'input' };
     const body = formatForwardedRequest(source, supplement, locale);
     const display = forwardedRequestDisplayText(body);
@@ -147,15 +144,15 @@ describe('forwarded request display', () => {
   it('reads legacy Chinese, absent-source and task-prefixed history', () => {
     const body = '[来源] 用户原话由宿主从已接收的输入原样保留。\n用户原话："只检查"\nagent补充："第一段\\n\\n第二段"';
     expect(forwardedRequestDisplayText(body)).toContain('agent补充：\n\n第一段\n\n第二段');
-    const absent = formatForwardedRequest({ userText: null }, supplement, 'zh-CN');
+    const absent = formatForwardedRequest({ userText: null }, supplement, 'en');
     expect(forwardedRequestDisplayText(absent)).toContain(supplement);
     const prefix = '[任务来源] 本任务由伙伴发起。\n\n任务 ID： task-1\n\n';
     expect(forwardedRequestDisplayText(prefix + body)).toBe(prefix + forwardedRequestDisplayText(body));
   });
   it('leaves incomplete wrappers, code samples and ordinary escaped prose verbatim', () => {
-    const body = formatForwardedRequest({ userText: original }, supplement, 'zh-CN');
+    const body = formatForwardedRequest({ userText: original }, supplement, 'en');
     for (const text of [body.slice(0, -1), body + '\nextra', '```text\n' + body + '\n```',
-      'literal \\n and C:\\new', body.replace('用户原话：', 'Other:'), body.replace(JSON.stringify(supplement), '42')]) {
+      'literal \\n and C:\\new', body.replace('User’s original words:', 'Other:'), body.replace(JSON.stringify(supplement), '42')]) {
       expect(forwardedRequestDisplayText(text)).toBe(text);
     }
   });

@@ -14,10 +14,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cindyMakeState } from '@/lib/cindyMakeState';
 import en from '@/i18n/locales/en/common.json';
-import zhCN from '@/i18n/locales/zh-CN/common.json';
-import zhTW from '@/i18n/locales/zh-TW/common.json';
-import ja from '@/i18n/locales/ja/common.json';
-import ko from '@/i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 
 import {
   applyRemoteSessionActivity,
@@ -404,10 +401,7 @@ describe('SessionCard visual cases', () => {
 
   it.each([
     { locale: 'en', resource: en },
-    { locale: 'zh-CN', resource: zhCN },
-    { locale: 'zh-TW', resource: zhTW },
-    { locale: 'ja', resource: ja },
-    { locale: 'ko', resource: ko },
+    { locale: 'fr', resource: fr },
   ])(
     'renders retained conflict titles with local creation times in $locale',
     async ({ locale, resource }) => {

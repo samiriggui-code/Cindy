@@ -16,10 +16,7 @@ import {
 } from '../sessionResources';
 import type { useSessionResourceCards } from '../useSessionResourceCards';
 import en from '@/i18n/locales/en/common.json';
-import zhCN from '@/i18n/locales/zh-CN/common.json';
-import zhTW from '@/i18n/locales/zh-TW/common.json';
-import ja from '@/i18n/locales/ja/common.json';
-import ko from '@/i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 
 afterEach(cleanup);
 const base: MakeRemoteSnapshot = {
@@ -39,10 +36,7 @@ const prep: MakeDoctorReport = {
 };
 const locales = [
   ['en', en],
-  ['zh-CN', zhCN],
-  ['zh-TW', zhTW],
-  ['ja', ja],
-  ['ko', ko],
+  ['fr', fr],
 ] as const;
 const phases = [
   {

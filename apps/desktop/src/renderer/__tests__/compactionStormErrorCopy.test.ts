@@ -17,10 +17,7 @@ import { describe, it, expect } from 'vitest';
 
 import { ERROR_REASON_I18N_KEYS } from '@/components/chat/errorReasonI18n';
 import en from '@/i18n/locales/en/common.json';
-import zhCN from '@/i18n/locales/zh-CN/common.json';
-import ja from '@/i18n/locales/ja/common.json';
-import ko from '@/i18n/locales/ko/common.json';
-import zhTW from '@/i18n/locales/zh-TW/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 
 // 与 packages/maker-core/src/agents/codex/compaction-storm.ts 的常量一致。
 // 这里刻意写字面量而不是 import:renderer 不依赖 maker-core,而 reason 是跨进程的
@@ -28,18 +25,12 @@ import zhTW from '@/i18n/locales/zh-TW/common.json';
 const REASON_GENERIC = 'codex_compaction_not_converging';
 const REASON_MODEL_SWITCH = 'codex_compaction_not_converging_model_switch';
 
-const LOCALES = { en, 'zh-CN': zhCN, 'zh-TW': zhTW, ja, ko } as Record<
-  string,
-  { logic: { errors: Record<string, string> } }
->;
+const LOCALES = { en, fr } as Record<string, { logic: { errors: Record<string, string> } }>;
 
 /** 断言切模型的措辞 —— 通用文案里出现任何一个都是在无证据地指认原因。 */
 const SWITCH_CLAIMS: Record<string, readonly string[]> = {
   en: ['switched model', 'Switch back', 'previous model'],
-  'zh-CN': ['切换过模型', '切回原模型', '切换前'],
-  'zh-TW': ['切換過模型', '切回原模型', '切換前'],
-  ja: ['モデルを切り替え', '元のモデルに戻す', '切り替え前'],
-  ko: ['모델을 변경', '원래 모델로', '변경 전'],
+  fr: ['a changé de modèle', "Revenez au modèle d'origine", 'limite de contexte antérieure'],
 };
 
 function copyFor(locale: string, reason: string): string {
@@ -85,10 +76,7 @@ describe('压缩风暴熔断的 reason → 文案映射', () => {
     // 通用那条唯一能给的就是「新开一个任务」。
     const nextStep: Record<string, string> = {
       en: 'start a new task',
-      'zh-CN': '新开一个任务',
-      'zh-TW': '新開一個任務',
-      ja: '新しいセッションを開始',
-      ko: '새 세션을 시작',
+      fr: 'démarrez une nouvelle tâche',
     };
     for (const reason of [REASON_GENERIC, REASON_MODEL_SWITCH]) {
       expect(copyFor(locale, reason).toLowerCase()).toContain(nextStep[locale].toLowerCase());

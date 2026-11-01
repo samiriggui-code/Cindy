@@ -3,10 +3,7 @@ import { projectMakeRemoteCard, makeRemoteRef, type MakeRemoteSnapshot } from '.
 import { createMakeRemoteProvider } from '../remoteProvider';
 import { RemoteResourceRegistry } from '../../device-link/remoteResourceRegistry';
 import en from '../../../renderer/i18n/locales/en/common.json';
-import zh from '../../../renderer/i18n/locales/zh-CN/common.json';
-import tw from '../../../renderer/i18n/locales/zh-TW/common.json';
-import ja from '../../../renderer/i18n/locales/ja/common.json';
-import ko from '../../../renderer/i18n/locales/ko/common.json';
+import fr from '../../../renderer/i18n/locales/fr/common.json';
 
 const context = { controllerDeviceId: 'phone' };
 const client = { protocolVersion: 1, primitives: ['session-controls'], locale: 'en' };
@@ -30,7 +27,7 @@ const project = (state: MakeRemoteSnapshot, dictionary: Record<string, unknown> 
   });
 
 describe('portable Cindy Make cards', () => {
-  it.each([en, zh, tw, ja, ko])(
+  it.each([en, fr])(
     'keeps read-only sync and PR status visible without workflow controls',
     (dictionary) => {
       for (const busy of [false, true]) {
@@ -114,7 +111,7 @@ describe('portable Cindy Make cards', () => {
       ]);
     },
   );
-  it.each([en, zh, tw, ja, ko])(
+  it.each([en, fr])(
     'keeps conflict processing and cleanup as active build stages on the phone',
     (dictionary) => {
       const state = snapshot();
@@ -140,13 +137,13 @@ describe('portable Cindy Make cards', () => {
         message: 'FATAL ERROR: JavaScript heap out of memory\n at C:/private/source.js',
       },
     };
-    const text = JSON.stringify(project(state, zh));
-    expect(text).toContain('内存上限');
+    const text = JSON.stringify(project(state, fr));
+    expect(text).toContain('limite de mémoire');
     expect(text).toContain('134');
     expect(text).toContain('FATAL ERROR: JavaScript heap out of memory');
     expect(text).not.toContain('private');
   });
-  it.each([en, zh, tw, ja, ko])(
+  it.each([en, fr])(
     'translates preparation, test steps, failure and recovery without leaking local details',
     (dictionary) => {
       const state = snapshot();

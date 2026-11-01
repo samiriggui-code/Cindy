@@ -4,11 +4,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createInstance } from 'i18next';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
-import zhCN from '@/i18n/locales/zh-CN/common.json';
 import en from '@/i18n/locales/en/common.json';
-import zhTW from '@/i18n/locales/zh-TW/common.json';
-import ja from '@/i18n/locales/ja/common.json';
-import ko from '@/i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 import { CindyMakeSyncStatus } from '../CindyMakeSync';
 import {
   CINDY_MAKE_SYNC_ERRORS,
@@ -17,10 +14,10 @@ import {
   type CindyMakeSyncWaiting,
 } from '../../../../shared/cindyMakeSync';
 
-const locales = { 'zh-CN': zhCN, 'zh-TW': zhTW, en, ja, ko };
+const locales = { en, fr };
 async function show(
   state: CindyMakeSyncState,
-  locale: keyof typeof locales = 'zh-CN',
+  locale: keyof typeof locales = 'fr',
   props: Partial<Parameters<typeof CindyMakeSyncStatus>[0]> = {},
 ) {
   const i18n = createInstance();
@@ -58,85 +55,85 @@ const waits: CindyMakeSyncWaiting[] = [
 describe('Sync status line', () => {
   it('says which official version Sync reached and what waits for a Cindy update', async () => {
     await show({ done: { at: 1, ref: 'v1.2.0', held: 'v1.3.0' } });
-    expect(screen.getByText('已同步到官方 v1.2.0')).toBeTruthy();
-    expect(screen.getByText(/官方 v1\.3\.0 已发布/)).toBeTruthy();
+    expect(screen.getByText('Synchronisé avec le v1.2.0 officiel')).toBeTruthy();
+    expect(screen.getByText(/Le v1\.3\.0 officiel est sorti/)).toBeTruthy();
     // Polite live text; the version summary keeps the single status region.
     expect(screen.queryByRole('status')).toBeNull();
   });
 
   it('shows the running step and the conflict it waits for in plain words', async () => {
     const running = await show({ running: true, step: 'combine' });
-    expect(running.container.textContent).toBe(zhCN.cindyMake.sync.step.combine);
+    expect(running.container.textContent).toBe(fr.cindyMake.sync.step.combine);
     running.unmount();
     const waiting = await show({ waiting: waits[0] });
-    expect(waiting.container.textContent).toContain(zhCN.cindyMake.sync.waiting.working.combine);
-    expect(screen.getByRole('button', { name: zhCN.cindyMake.merge.openTask })).toBeTruthy();
+    expect(waiting.container.textContent).toContain(fr.cindyMake.sync.waiting.working.combine);
+    expect(screen.getByRole('button', { name: fr.cindyMake.merge.openTask })).toBeTruthy();
   });
 
   it('offers abandoning the operation Sync waits for', async () => {
     const onAbandon = vi.fn();
-    await show({ waiting: waits[1] }, 'zh-CN', { onAbandon });
-    fireEvent.click(screen.getByRole('button', { name: zhCN.cindyMake.sync.abandon.action }));
+    await show({ waiting: waits[1] }, 'fr', { onAbandon });
+    fireEvent.click(screen.getByRole('button', { name: fr.cindyMake.sync.abandon.action }));
     expect(onAbandon).toHaveBeenCalledOnce();
   });
 
   it('lets the user use a result that lost changes, and says how many', async () => {
     const onAccept = vi.fn();
-    const { container } = await show({ waiting: waits[5] }, 'zh-CN', { onAccept });
-    expect(container.textContent).toContain('少了 3 项');
-    fireEvent.click(screen.getByRole('button', { name: zhCN.cindyMake.sync.accept.action }));
+    const { container } = await show({ waiting: waits[5] }, 'fr', { onAccept });
+    expect(container.textContent).toContain('Vos modifications sont absentes du résultat : 3');
+    fireEvent.click(screen.getByRole('button', { name: fr.cindyMake.sync.accept.action }));
     expect(onAccept).toHaveBeenCalledOnce();
   });
 
   it('continues an operation whose task is gone, and leaves another account’s alone', async () => {
     const onResume = vi.fn();
-    const paused = await show({ waiting: waits[9] }, 'zh-CN', { onResume, onAbandon: vi.fn() });
-    expect(screen.queryByRole('button', { name: zhCN.cindyMake.merge.openTask })).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: zhCN.cindyMake.sync.resume }));
+    const paused = await show({ waiting: waits[9] }, 'fr', { onResume, onAbandon: vi.fn() });
+    expect(screen.queryByRole('button', { name: fr.cindyMake.merge.openTask })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: fr.cindyMake.sync.resume }));
     expect(onResume).toHaveBeenCalledOnce();
     paused.unmount();
-    await show({ waiting: waits[10] }, 'zh-CN', { onResume, onAbandon: vi.fn() });
-    expect(screen.getByText(zhCN.cindyMake.sync.waiting.otherAccount)).toBeTruthy();
+    await show({ waiting: waits[10] }, 'fr', { onResume, onAbandon: vi.fn() });
+    expect(screen.getByText(fr.cindyMake.sync.waiting.otherAccount)).toBeTruthy();
     expect(screen.queryByRole('button')).toBeNull();
   });
 
   it('offers nothing but progress while Abandon is carried out', async () => {
-    await show({ waiting: waits[8] }, 'zh-CN', { onAbandon: vi.fn(), onAccept: vi.fn() });
-    expect(screen.getByText(zhCN.cindyMake.sync.waiting.abandoning)).toBeTruthy();
+    await show({ waiting: waits[8] }, 'fr', { onAbandon: vi.fn(), onAccept: vi.fn() });
+    expect(screen.getByText(fr.cindyMake.sync.waiting.abandoning)).toBeTruthy();
     expect(screen.queryByRole('button')).toBeNull();
   });
 
   it('points to generating when the personal version changed since it was generated', async () => {
     const onGenerate = vi.fn();
-    await show({ done: { at: 1, ref: 'v1.2.0' } }, 'zh-CN', { needsGenerate: true, onGenerate });
-    expect(screen.getByText(zhCN.cindyMake.sync.needsGenerate)).toBeTruthy();
+    await show({ done: { at: 1, ref: 'v1.2.0' } }, 'fr', { needsGenerate: true, onGenerate });
+    expect(screen.getByText(fr.cindyMake.sync.needsGenerate)).toBeTruthy();
     fireEvent.click(
-      screen.getByRole('button', { name: zhCN.cindyMake.history.generatePersonal }),
+      screen.getByRole('button', { name: fr.cindyMake.history.generatePersonal }),
     );
     expect(onGenerate).toHaveBeenCalledOnce();
   });
 
   it('offers keeping one side when the two versions cannot be combined', async () => {
     const onKeep = vi.fn();
-    const { unmount } = await show({ error: 'diverged' }, 'zh-CN', { onKeep });
-    fireEvent.click(screen.getByRole('button', { name: zhCN.cindyMake.sync.keep.local }));
+    const { unmount } = await show({ error: 'diverged' }, 'fr', { onKeep });
+    fireEvent.click(screen.getByRole('button', { name: fr.cindyMake.sync.keep.local }));
     expect(onKeep).toHaveBeenCalledWith('local');
     unmount();
     // Not after an abandoned official update: there is nothing to choose between.
-    await show({ error: 'cancelled', abandoned: 'official' }, 'zh-CN', { onKeep });
-    expect(screen.queryByRole('button', { name: zhCN.cindyMake.sync.keep.github })).toBeNull();
+    await show({ error: 'cancelled', abandoned: 'official' }, 'fr', { onKeep });
+    expect(screen.queryByRole('button', { name: fr.cindyMake.sync.keep.github })).toBeNull();
   });
 
   it('keeps the completed local update visible above a GitHub problem', async () => {
     const { container } = await show({ error: 'github', done: { at: 1, ref: 'v1.2.0' } });
-    expect(container.textContent).toContain('已同步到官方 v1.2.0');
-    expect(container.textContent).toContain(zhCN.cindyMake.sync.errors.github);
+    expect(container.textContent).toContain('Synchronisé avec le v1.2.0 officiel');
+    expect(container.textContent).toContain(fr.cindyMake.sync.errors.github);
   });
 
   it('explains a personal version already ahead of this computer’s Cindy', async () => {
     const { container } = await show({ done: { at: 1, ahead: true } });
-    expect(container.textContent).toContain(zhCN.cindyMake.sync.doneCurrent);
-    expect(container.textContent).toContain(zhCN.cindyMake.sync.ahead);
+    expect(container.textContent).toContain(fr.cindyMake.sync.doneCurrent);
+    expect(container.textContent).toContain(fr.cindyMake.sync.ahead);
   });
 
   it.each(Object.keys(locales) as (keyof typeof locales)[])(

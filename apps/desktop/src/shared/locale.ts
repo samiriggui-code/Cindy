@@ -1,11 +1,11 @@
 /** UI-supported concrete locales. */
-export const SUPPORTED_LOCALES = ['zh-CN', 'zh-TW', 'en', 'ja', 'ko'] as const;
+export const SUPPORTED_LOCALES = ['fr', 'en'] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 /** User-facing locale preference. 'system' is resolved by the host process. */
 export type LocalePreference = SupportedLocale | 'system';
 
-export const DEFAULT_LOCALE: SupportedLocale = 'en';
+export const DEFAULT_LOCALE: SupportedLocale = 'fr';
 
 function normalizeLocaleTag(raw: string | undefined | null): string | null {
   const tag = raw?.trim().replace(/_/g, '-').replace(/\..*$/, '');
@@ -61,22 +61,6 @@ function matchSupportedLocale(raw: string | undefined | null): SupportedLocale |
 }
 
 function matchSystemLocale(raw: string | undefined | null): SupportedLocale | null {
-  const normalized = normalizeLocaleTag(raw);
-  const language = getLanguageCode(raw);
-  if (language === 'zh') {
-    const intlLocale = normalized ? new Intl.Locale(normalized) : null;
-    const script = intlLocale?.script?.toLowerCase() ?? '';
-    const region = intlLocale?.region?.toLowerCase() ?? '';
-    // An explicit script is stronger than a conflicting region, e.g.
-    // zh-Hans-HK is Simplified Chinese and zh-Hant-CN is Traditional Chinese.
-    if (script === 'hans') return 'zh-CN';
-    if (script === 'hant') return 'zh-TW';
-    if (['cn', 'sg'].includes(region)) return 'zh-CN';
-    if (['tw', 'hk', 'mo'].includes(region)) return 'zh-TW';
-    // Bare `zh` follows the mainland default; an explicit Traditional tag is
-    // handled above before this fallback.
-    return 'zh-CN';
-  }
   return matchSupportedLocale(raw);
 }
 

@@ -3,7 +3,7 @@ import React from 'react';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { unifiedModelEntries, type ProviderView } from '@cindy/model-providers';
-import dictionary from '../../../i18n/locales/zh-CN/common.json';
+import dictionary from '../../../i18n/locales/fr/common.json';
 import { ModelHarnessPicker } from '../ModelHarnessPicker';
 import { ModelConfigFlyout } from '../ModelConfigFlyout';
 
@@ -64,13 +64,13 @@ describe('model harness choices', () => {
         customized: false, wireModelId: capability.wireModelId }} state="recommended" sourceLabel="Cindy AI" price={null}
       effortLabelOf={(_, effort) => effort} onEngineChange={vi.fn()} onEffortChange={vi.fn()}
       onFastChange={vi.fn()} onResetToRecommended={vi.fn()} onAddFavorite={vi.fn()} onRemoveFavorite={vi.fn()} />);
-    expect(await screen.findByText('Cindy AI · 1K 上下文')).toBeTruthy();
+    expect(await screen.findByText('Cindy AI · contexte 1K')).toBeTruthy();
     expect(getModelContextLimit).toHaveBeenCalledWith({ providerId: 'xd', agent, modelId: capability.wireModelId });
     getModelContextLimit.mockResolvedValue({ limit: null, isCustomized: false,
       codexContext: { contextWindow: 1_048_576 } });
     await act(async () => { changed?.(); });
-    expect(screen.queryByText('Cindy AI · 1K 上下文')).toBeNull();
-    expect(screen.getByText(/Cindy AI · 1M 上下文/)).toBeTruthy();
+    expect(screen.queryByText('Cindy AI · contexte 1K')).toBeNull();
+    expect(screen.getByText(/Cindy AI · contexte 1M/)).toBeTruthy();
     rendered.unmount();
     expect(unsubscribe).toHaveBeenCalled();
     Reflect.deleteProperty(window, 'electronAPI');
@@ -86,30 +86,30 @@ describe('model harness choices', () => {
       container.querySelector('[data-engine-capsule]')?.getAttribute('data-engine-capsule'),
     ).toBe('pi');
     expect(
-      screen.getByRole('button', { name: /Pi · Google Gemini · 原生支持 · 推荐/ }),
+      screen.getByRole('button', { name: /Pi · Google Gemini · Prise en charge native · Recommandé/ }),
     ).toBeTruthy();
-    expect(screen.getByRole('button', { name: /Codex · Responses · 兼容模式/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /Codex · Responses · Mode de compatibilité/ })).toBeTruthy();
     expect(container.querySelectorAll('[data-engine-capsule]')).toHaveLength(3);
-    expect(screen.queryByText('原生支持')).toBeNull();
-    expect(screen.getAllByText('兼容模式')).toHaveLength(2);
-    expect(screen.queryByText('推荐 Pi')).toBeNull();
-    expect(screen.queryByText('兼容')).toBeNull();
+    expect(screen.queryByText('Prise en charge native')).toBeNull();
+    expect(screen.getAllByText('Mode de compatibilité')).toHaveLength(2);
+    expect(screen.queryByText('Recommandé Pi')).toBeNull();
+    expect(screen.queryByText('Compatible')).toBeNull();
     expect(screen.queryByRole('combobox')).toBeNull();
     expect(screen.getByRole('button', { name: /Claude Code/ }).title).toContain('Google Gemini');
-    expect(screen.queryByText('Messages · 兼容模式')).toBeNull();
+    expect(screen.queryByText('Messages · Mode de compatibilité')).toBeNull();
     expect(onChange).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: /Codex · Responses · 兼容模式/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Codex · Responses · Mode de compatibilité/ }));
     expect(onChange).toHaveBeenCalledExactlyOnceWith('codex');
     rerender(<ModelHarnessPicker entry={model} value="codex" onChange={onChange} />);
     expect(container.querySelectorAll('[aria-pressed="true"]')).toHaveLength(1);
     expect(
       screen
-        .getByRole('button', { name: /Codex · Responses · 兼容模式/ })
+        .getByRole('button', { name: /Codex · Responses · Mode de compatibilité/ })
         .getAttribute('aria-pressed'),
     ).toBe('true');
     expect(
       screen
-        .getByRole('button', { name: /Pi · Google Gemini · 原生支持 · 推荐/ })
+        .getByRole('button', { name: /Pi · Google Gemini · Prise en charge native · Recommandé/ })
         .getAttribute('aria-pressed'),
     ).toBe('false');
   });
@@ -117,8 +117,8 @@ describe('model harness choices', () => {
   it('opens the compatibility explanation without selecting its harness', async () => {
     const onChange = vi.fn();
     render(<ModelHarnessPicker entry={entry()} value="pi" onChange={onChange} />);
-    fireEvent.click(screen.getAllByRole('button', { name: '兼容模式' })[0]!);
-    expect((await screen.findByRole('tooltip')).textContent).toContain('建议有经验的用户使用');
+    fireEvent.click(screen.getAllByRole('button', { name: 'Mode de compatibilité' })[0]!);
+    expect((await screen.findByRole('tooltip')).textContent).toContain('Recommandé pour les utilisateurs expérimentés');
     expect(onChange).not.toHaveBeenCalled();
   });
 
@@ -170,7 +170,7 @@ describe('model harness choices', () => {
     expect(screen.getByText('$0.08')).toBeTruthy();
     expect(document.querySelectorAll('[data-engine-capsule]')).toHaveLength(1);
     const current = screen.getByRole('button', {
-      name: /Codex · Responses · 兼容模式/,
+      name: /Codex · Responses · Mode de compatibilité/,
     }) as HTMLButtonElement;
     expect(current.disabled).toBe(true);
     fireEvent.click(current);
@@ -196,7 +196,7 @@ describe('model harness choices', () => {
     }
     const onChange = vi.fn();
     render(<ModelHarnessPicker entry={model} value="pi" disabled onChange={onChange} />);
-    expect(screen.getAllByRole('button', { name: /协议待确认/ })).toHaveLength(3);
+    expect(screen.getAllByRole('button', { name: /Protocole non confirmé/ })).toHaveLength(3);
     for (const button of screen.getAllByRole('button')) {
       fireEvent.click(button);
       expect((button as HTMLButtonElement).disabled).toBe(true);

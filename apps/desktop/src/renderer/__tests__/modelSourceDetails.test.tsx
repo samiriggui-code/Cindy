@@ -1,10 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react';
 import en from '../i18n/locales/en/common.json';
-import zhCN from '../i18n/locales/zh-CN/common.json';
-import zhTW from '../i18n/locales/zh-TW/common.json';
-import ja from '../i18n/locales/ja/common.json';
-import ko from '../i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ProviderView } from '@cindy/model-providers';
@@ -100,7 +97,7 @@ beforeEach(() => {
   vi.useFakeTimers();
   vi.setSystemTime(now);
   reads.realRemoteClaude = false;
-  reads.pendingLabel = zhCN.quotaCard.resetPending;
+  reads.pendingLabel = fr.quotaCard.resetPending;
   reads.accounts = { 'account-a': snapshot(22), 'account-b': snapshot(88) };
   reads.webSnapshot = null;
   reads.claudeSnapshot = null;
@@ -376,7 +373,7 @@ describe('model source second line', () => {
     expect(screen.queryByText(quotaText('1天 64%'))).toBeNull();
   });
 
-  it.each([en, zhCN, zhTW, ja, ko])(
+  it.each([en, fr])(
     'constrains two localized pending windows and retains the full title',
     (locale) => {
       reads.pendingLabel = locale.quotaCard.resetPending;

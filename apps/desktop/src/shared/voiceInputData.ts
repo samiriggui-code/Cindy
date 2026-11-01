@@ -515,10 +515,9 @@ export function getDefaultVoiceInputSettings(
   region: CindyRegion = CURRENT_CINDY_REGION,
 ): VoiceInputSettings {
   return {
-    // Global cannot assume a spoken language; the Mainland China build uses
-    // Chinese as its product default. A persisted user choice still wins in
-    // normalizeVoiceInputSettings below.
-    language: region === 'cn' ? 'zh-CN' : 'auto',
+    // No build can assume a spoken language now that only fr/en are UI locales.
+    // A persisted user choice still wins in normalizeVoiceInputSettings below.
+    language: 'auto',
     microphoneDeviceId: null,
     muteSystemAudio: true,
     playInteractionSound: true,

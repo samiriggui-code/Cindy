@@ -7,8 +7,8 @@ import { initReactI18next } from 'react-i18next';
 
 import { CindyAuthClient, reduceAuthFlow, type AuthFlowState } from '@cindy/auth-client';
 import { createScenarioFetch } from '@cindy/auth-client/fixtures';
+import fr from '@/i18n/locales/fr/common.json';
 
-import zhCN from '../../../i18n/locales/zh-CN/common.json';
 
 /**
  * PR2a 错误码文案表(state-manifest desktop.error-copy.* 20 行):
@@ -16,7 +16,7 @@ import zhCN from '../../../i18n/locales/zh-CN/common.json';
  * wire code)与 LOGIN_BUSY(无专属 key 代表项)→ fallback「登录失败,请稍后重试」。
  *
  * 全真链:错误码经 scenario `error:verify-code:<CODE>` 由真实 CindyAuthClient
- * 抛出(AuthError.code 提取),文案经真 i18next 实例(真 zh-CN common.json)
+ * 抛出(AuthError.code 提取),文案经真 i18next 实例(真 fr common.json)
  * 渲染,LoginErrorText 断言与 JSON 逐字相等——不 mock 翻译层。
  */
 
@@ -62,7 +62,7 @@ const NAMED_CODES = [
 ] as const;
 const FALLBACK_CODES = ['UNKNOWN_CODE', 'LOGIN_BUSY'] as const;
 
-const zhErrors = zhCN.login.errors as Record<string, string>;
+const frErrors = fr.login.errors as Record<string, string>;
 
 /** 真实 client 走 scenario error fetch,把 wire 错误码原样抛出后提取。 */
 async function wireErrorCode(code: string): Promise<string> {
@@ -81,16 +81,19 @@ async function wireErrorCode(code: string): Promise<string> {
   throw new Error(`scenario error:verify-code:${code} 未抛错`);
 }
 
+// Some French strings carry no-break spaces, which Testing Library collapses in the DOM text.
+const textOf = (value: string) => value.replace(/\s+/g, ' ').trim();
+
 let identifierState: AuthFlowState;
 
 beforeAll(async () => {
   await i18next.use(initReactI18next).init({
-    lng: 'zh-CN',
+    lng: 'fr',
     fallbackLng: false,
     ns: ['common'],
     defaultNS: 'common',
     interpolation: { escapeValue: false },
-    resources: { 'zh-CN': { common: zhCN } },
+    resources: { 'fr': { common: fr } },
   });
   const providers = await new CindyAuthClient({
     baseUrl: 'https://auth.scenario.invalid',
@@ -186,21 +189,21 @@ describe('error-copy 桌面 19 码表 + 兜底(现网 i18n verbatim,#D91F37 族)
 
   it('distinguishes rate limits, shows the server deadline and offers private logs', async () => {
     const view = mountWithError('RATE_LIMITED');
-    expect(screen.getByText(zhCN.login.rateLimit.unknownWait)).toBeTruthy();
+    expect(screen.getByText(fr.login.rateLimit.unknownWait)).toBeTruthy();
     const retryAt = Date.now() + 120_000;
     loginHook.value.retryAt = retryAt;
     view.rerender(<LoginPage />);
     expect(
       screen.getByText(
         i18next.t('login.rateLimit.retryAt', {
-          time: new Date(retryAt).toLocaleString('zh-CN'),
+          time: new Date(retryAt).toLocaleString('fr'),
         }),
       ),
     ).toBeTruthy();
     fireEvent.click(screen.getByTestId('login-error-retry'));
-    expect(screen.getByText(zhCN.login.rateLimit.support)).toBeTruthy();
-    expect(screen.queryByText(zhCN.credentialStore.dialog.stepRestartMac)).toBeNull();
-    fireEvent.click(screen.getByText(zhCN.credentialStore.dialog.openLogs));
+    expect(screen.getByText(fr.login.rateLimit.support)).toBeTruthy();
+    expect(screen.queryByText(fr.credentialStore.dialog.stepRestartMac)).toBeNull();
+    fireEvent.click(screen.getByText(fr.credentialStore.dialog.openLogs));
     await waitFor(() => expect(window.electronAPI.openLogsDir).toHaveBeenCalledOnce());
   });
 
@@ -225,8 +228,8 @@ describe('error-copy 桌面 19 码表 + 兜底(现网 i18n verbatim,#D91F37 族)
     'shows actionable local error %s',
     (code) => {
       mountWithError(code);
-      expect(screen.getByTestId('login-error-text').textContent).toBe(zhErrors[code]);
-      expect(zhErrors[code]).not.toBe(zhErrors.fallback);
+      expect(screen.getByTestId('login-error-text').textContent).toBe(frErrors[code]);
+      expect(frErrors[code]).not.toBe(frErrors.fallback);
     },
   );
   it('explains preserved sign-in and offers recovery when the saved credentials cannot be read', () => {
@@ -236,15 +239,15 @@ describe('error-copy 桌面 19 码表 + 兜底(现网 i18n verbatim,#D91F37 族)
       recoverTo: 'identifier',
     };
     render(<LoginPage />);
-    expect(screen.getByText(zhCN.login.savedLoginPreserved)).toBeTruthy();
-    expect(screen.getByText(zhCN.credentialStore.dialog.title)).toBeTruthy();
+    expect(screen.getByText(fr.login.savedLoginPreserved)).toBeTruthy();
+    expect(screen.getByText(fr.credentialStore.dialog.title)).toBeTruthy();
     expect(screen.getByTestId('login-error-text').textContent).toBe(
-      zhErrors.CREDENTIAL_STORE_UNAVAILABLE,
+      frErrors.CREDENTIAL_STORE_UNAVAILABLE,
     );
     fireEvent.click(screen.getByTestId('login-error-retry'));
     expect(screen.getByRole('alertdialog')).toBeTruthy();
     expect(loginHook.value.dispatch).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: zhCN.credentialStore.dialog.confirm }));
+    fireEvent.click(screen.getByRole('button', { name: fr.credentialStore.dialog.confirm }));
     fireEvent.click(screen.getByTestId('login-credential-recheck'));
     expect(loginHook.value.dispatch).toHaveBeenCalledWith({ type: 'reset' });
   });
@@ -268,14 +271,14 @@ describe('error-copy 桌面 19 码表 + 兜底(现网 i18n verbatim,#D91F37 族)
       });
       mountWithError('CREDENTIAL_STORE_UNAVAILABLE');
       fireEvent.click(screen.getByTestId('login-error-retry'));
-      const copy = zhCN.credentialStore.dialog;
-      expect(Boolean(screen.queryByText(copy.stepMacKeychain))).toBe(platform === 'darwin');
-      expect(Boolean(screen.queryByText(copy.stepLinuxKeyring))).toBe(platform === 'linux');
+      const copy = fr.credentialStore.dialog;
+      expect(Boolean(screen.queryByText(textOf(copy.stepMacKeychain)))).toBe(platform === 'darwin');
+      expect(Boolean(screen.queryByText(textOf(copy.stepLinuxKeyring)))).toBe(platform === 'linux');
       expect(
-        screen.getByText(platform === 'darwin' ? copy.stepRestartMac : copy.stepRestart),
+        screen.getByText(textOf(platform === 'darwin' ? copy.stepRestartMac : copy.stepRestart)),
       ).toBeTruthy();
-      expect(screen.getByText(copy.stepSupport)).toBeTruthy();
-      expect(screen.getByText(copy.preserveData)).toBeTruthy();
+      expect(screen.getByText(textOf(copy.stepSupport))).toBeTruthy();
+      expect(screen.getByText(textOf(copy.preserveData))).toBeTruthy();
       expect(screen.getByText('CREDENTIAL_STORE_UNAVAILABLE')).toBeTruthy();
       fireEvent.click(screen.getByRole('button', { name: copy.openLogs }));
       await waitFor(() => expect(window.electronAPI.openLogsDir).toHaveBeenCalledTimes(1));
@@ -292,31 +295,31 @@ describe('error-copy 桌面 19 码表 + 兜底(现网 i18n verbatim,#D91F37 族)
       });
       mountWithError('CREDENTIAL_STORE_UNAVAILABLE');
       fireEvent.click(screen.getByTestId('login-error-retry'));
-      fireEvent.click(screen.getByRole('button', { name: zhCN.credentialStore.dialog.openLogs }));
-      expect(await screen.findByText(zhCN.credentialStore.dialog.logsFailed)).toBeTruthy();
+      fireEvent.click(screen.getByRole('button', { name: fr.credentialStore.dialog.openLogs }));
+      expect(await screen.findByText(fr.credentialStore.dialog.logsFailed)).toBeTruthy();
       expect(screen.queryByText('private path must not be shown')).toBeNull();
     },
   );
 
   for (const code of NAMED_CODES) {
     it(`error-copy ${code} 文案 verbatim`, async () => {
-      expect(zhErrors[code], `zh-CN 缺 login.errors.${code}`).toBeTruthy();
+      expect(frErrors[code], `fr 缺 login.errors.${code}`).toBeTruthy();
       const wire = await wireErrorCode(code);
       expect(wire).toBe(code); // 真实 client 原样透传 wire code
       mountWithError(wire);
       const errorText = screen.getByTestId('login-error-text');
-      expect(errorText.textContent).toBe(zhErrors[code]);
+      expect(errorText.textContent).toBe(frErrors[code]);
       expect(errorText.getAttribute('style')).toContain('var(--login-error-fg)');
     });
   }
 
   for (const code of FALLBACK_CODES) {
     it(`error-copy ${code} 落兜底文案(登录失败,请稍后重试)`, async () => {
-      expect(zhErrors[code]).toBeUndefined(); // 无专属 key 才走兜底
+      expect(frErrors[code]).toBeUndefined(); // 无专属 key 才走兜底
       const wire = await wireErrorCode(code);
       expect(wire).toBe(code);
       mountWithError(wire);
-      expect(screen.getByTestId('login-error-text').textContent).toBe(zhErrors.fallback);
+      expect(screen.getByTestId('login-error-text').textContent).toBe(frErrors.fallback);
     });
   }
 

@@ -7,24 +7,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AtMentionPanel } from '../components/new-chat/AtMentionPanel';
 import en from '../i18n/locales/en/common.json';
-import ja from '../i18n/locales/ja/common.json';
-import ko from '../i18n/locales/ko/common.json';
-import zhCN from '../i18n/locales/zh-CN/common.json';
-import zhTW from '../i18n/locales/zh-TW/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 
 const translations = [
   ['en', 'Mivo Library (Read-Only)'],
-  ['zh-TW', 'Mivo 作品庫（唯讀）'],
-  ['ja', 'Mivo ライブラリ（読み取り専用）'],
-  ['ko', 'Mivo 라이브러리(읽기 전용)'],
-  ['zh-CN', 'Mivo 作品库（只读）'],
+  ['fr', 'Bibliothèque Mivo (lecture seule)'],
 ] as const;
 const resources = {
   en: { common: en },
-  ja: { common: ja },
-  ko: { common: ko },
-  'zh-CN': { common: zhCN },
-  'zh-TW': { common: zhTW },
+  fr: { common: fr },
 };
 
 beforeEach(() => {

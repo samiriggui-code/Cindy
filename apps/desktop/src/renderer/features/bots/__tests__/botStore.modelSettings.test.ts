@@ -46,7 +46,7 @@ async function hydratedStore(api: ReturnType<typeof apiFixture>) {
 beforeEach(() => { vi.resetModules(); window.localStorage.clear(); });
 
 describe('invitation locale before provider mount', () => {
-  it.each(['zh-CN', 'zh-TW', 'en', 'ja', 'ko'])(
+  it.each(['en', 'fr'])(
     'sends the saved %s locale in initial hydration without menu synchronization',
     async (locale) => {
       const api = apiFixture();
@@ -62,10 +62,10 @@ describe('invitation locale before provider mount', () => {
     'resolves %s to the host system locale before hydration',
     async (preference) => {
       const api = apiFixture();
-      Object.assign(window.electronAPI, { preferredSystemLocale: 'ko' });
+      Object.assign(window.electronAPI, { preferredSystemLocale: 'en' });
       window.localStorage.setItem('language', preference);
       await hydratedStore(api);
-      expect(api.list).toHaveBeenCalledWith(expect.objectContaining({ locale: 'ko' }));
+      expect(api.list).toHaveBeenCalledWith(expect.objectContaining({ locale: 'en' }));
     },
   );
 
@@ -75,16 +75,16 @@ describe('invitation locale before provider mount', () => {
     const storageWrite = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('blocked'); });
     try {
       const { writeStoredLocale } = await import('@/lib/localePreference');
-      writeStoredLocale('ja');
+      writeStoredLocale('fr');
       await hydratedStore(api);
-      expect(api.list).toHaveBeenCalledWith(expect.objectContaining({ locale: 'ja' }));
+      expect(api.list).toHaveBeenCalledWith(expect.objectContaining({ locale: 'fr' }));
     } finally { storageWrite.mockRestore(); }
   });
 
   it('freezes the create-request locale before asynchronous model preparation', async () => {
     const api = apiFixture();
     const store = await hydratedStore(api);
-    window.localStorage.setItem('language', 'ja');
+    window.localStorage.setItem('language', 'fr');
     const read = deferred<typeof saved>();
     api.getModelChainSettings.mockReturnValueOnce(read.promise);
     const creating = store.addBotProfileAndWait({
@@ -95,7 +95,7 @@ describe('invitation locale before provider mount', () => {
     window.localStorage.setItem('language', 'en');
     read.resolve(saved);
     await creating;
-    expect(api.create).toHaveBeenCalledWith(expect.objectContaining({ locale: 'ja' }));
+    expect(api.create).toHaveBeenCalledWith(expect.objectContaining({ locale: 'fr' }));
   });
 });
 

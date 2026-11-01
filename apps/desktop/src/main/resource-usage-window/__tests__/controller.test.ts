@@ -205,17 +205,17 @@ describe('ResourceUsageWindowController', () => {
     const { controller, windows } = makeHarness();
     controller.prewarm();
 
-    controller.setLocale('zh-CN');
+    controller.setLocale('fr');
 
     expect(windows[0]?.send).toHaveBeenCalledWith(
       RESOURCE_USAGE_WINDOW_LOCALE_CHANGED_CHANNEL,
-      'zh-CN',
+      'fr',
     );
   });
 
   it('replays the latest locale after the renderer becomes ready', () => {
     const { controller, windows } = makeHarness();
-    controller.setLocale('ja');
+    controller.setLocale('fr');
     controller.prewarm();
     vi.clearAllMocks();
 
@@ -223,19 +223,19 @@ describe('ResourceUsageWindowController', () => {
 
     expect(windows[0]?.send).toHaveBeenCalledWith(
       RESOURCE_USAGE_WINDOW_LOCALE_CHANGED_CHANNEL,
-      'ja',
+      'fr',
     );
   });
 
   it('applies the last locale when prewarming starts after the preference change', () => {
     const { controller, windows } = makeHarness();
-    controller.setLocale('ja');
+    controller.setLocale('fr');
 
     controller.prewarm();
 
     expect(windows[0]?.send).toHaveBeenCalledWith(
       RESOURCE_USAGE_WINDOW_LOCALE_CHANGED_CHANNEL,
-      'ja',
+      'fr',
     );
   });
 
@@ -323,13 +323,13 @@ describe('ResourceUsageWindowController', () => {
         return win as unknown as BrowserWindow;
       },
       isOpenSender: () => true,
-      resolveNativeTitle: (locale) => (locale === 'zh-CN' ? '资源监视器' : 'Activity Monitor'),
+      resolveNativeTitle: (locale) => (locale === 'fr' ? "Moniteur d'activité" : 'Activity Monitor'),
     });
     controller.prewarm();
     expect(windows[0]?.setTitle).toHaveBeenCalledWith('Activity Monitor');
     windows[0]?.setTitle.mockClear();
-    controller.setLocale('zh-CN');
-    expect(windows[0]?.setTitle).toHaveBeenCalledWith('资源监视器');
+    controller.setLocale('fr');
+    expect(windows[0]?.setTitle).toHaveBeenCalledWith("Moniteur d'activité");
   });
 
   it('keeps the localized native title when the renderer reports Cindy as the page title', () => {
@@ -341,7 +341,7 @@ describe('ResourceUsageWindowController', () => {
         return win as unknown as BrowserWindow;
       },
       isOpenSender: () => true,
-      resolveNativeTitle: (locale) => (locale === 'zh-CN' ? '资源监视器' : 'Activity Monitor'),
+      resolveNativeTitle: (locale) => (locale === 'fr' ? "Moniteur d'activité" : 'Activity Monitor'),
     });
     controller.prewarm();
     windows[0]?.setTitle.mockClear();
@@ -351,12 +351,12 @@ describe('ResourceUsageWindowController', () => {
     expect(firstLoad.preventDefault).toHaveBeenCalled();
     expect(windows[0]?.setTitle).toHaveBeenCalledWith('Activity Monitor');
 
-    controller.setLocale('zh-CN');
+    controller.setLocale('fr');
     windows[0]?.setTitle.mockClear();
     const reload = { preventDefault: vi.fn() };
     windows[0]?.emitWebContents('page-title-updated', reload, 'Cindy');
     expect(reload.preventDefault).toHaveBeenCalled();
-    expect(windows[0]?.setTitle).toHaveBeenCalledWith('资源监视器');
+    expect(windows[0]?.setTitle).toHaveBeenCalledWith("Moniteur d'activité");
   });
 
   it('hides with the owner without restoring a hidden Cindy window', () => {

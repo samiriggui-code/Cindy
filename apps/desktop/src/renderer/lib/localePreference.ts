@@ -20,6 +20,10 @@ export function readStoredLocale(): LocalePreference {
     if (raw === 'system' || (raw && (SUPPORTED_LOCALES as readonly string[]).includes(raw))) {
       return raw as LocalePreference;
     }
+    // Legacy UI locales from before fr/en-only builds.
+    if (raw === 'zh-CN' || raw === 'zh-TW' || raw === 'ja' || raw === 'ko') {
+      return 'system';
+    }
   } catch {
     // Storage may be unavailable in sandboxed windows.
   }

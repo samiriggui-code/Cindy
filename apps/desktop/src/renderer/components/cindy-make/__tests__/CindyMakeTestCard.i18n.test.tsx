@@ -5,10 +5,7 @@ import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { setDataOwnerGeneration } from '@/contexts/dataOwnerGeneration';
 import en from '@/i18n/locales/en/common.json';
-import zhCN from '@/i18n/locales/zh-CN/common.json';
-import zhTW from '@/i18n/locales/zh-TW/common.json';
-import ja from '@/i18n/locales/ja/common.json';
-import ko from '@/i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 import type { CindyMakeCompletionMeta } from '../../../../shared/cindyMakeSession';
 import type { CindyVersionsState } from '../../../../shared/cindyVersions';
 import { CindyMakeTestCard } from '../CindyMakeTestCard';
@@ -23,10 +20,7 @@ vi.mock('@/features/device-link/stickySessionOrigin', () => ({
 
 const cases = [
   { locale: 'en', resource: en },
-  { locale: 'zh-CN', resource: zhCN },
-  { locale: 'zh-TW', resource: zhTW },
-  { locale: 'ja', resource: ja },
-  { locale: 'ko', resource: ko },
+  { locale: 'fr', resource: fr },
 ];
 
 beforeEach(() => setDataOwnerGeneration('test-card-real-locales'));

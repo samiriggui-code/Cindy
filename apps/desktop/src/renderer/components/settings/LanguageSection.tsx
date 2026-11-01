@@ -13,11 +13,7 @@ import { useLocale } from '@/hooks/useLocale';
 import { SUPPORTED_LOCALES, type LocalePreference } from '@/i18n';
 
 // 「跟随系统」优先,英语作为第一个显式语言,其余语言按支持列表顺序排列。
-const LANGUAGE_OPTIONS: ReadonlyArray<LocalePreference> = [
-  'system',
-  'en',
-  ...SUPPORTED_LOCALES.filter((locale) => locale !== 'en'),
-];
+const LANGUAGE_OPTIONS: ReadonlyArray<LocalePreference> = ['system', 'fr', 'en'];
 
 export function LanguageSection() {
   const { t } = useTranslation();

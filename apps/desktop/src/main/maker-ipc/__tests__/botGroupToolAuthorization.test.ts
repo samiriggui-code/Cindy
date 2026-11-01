@@ -58,7 +58,7 @@ describe('live group tool authority', () => {
     await expect(authorizeGroupTool('lane', 'bot', 'owner-action')).resolves.toBeDefined();
     expect(validate).toHaveBeenCalledTimes(2);
   });
-  it.each(['en', 'zh-CN', 'zh-TW', 'ja', 'ko'] as const)('localizes a denied call in %s', async locale => {
+  it.each(['fr', 'en'] as const)('localizes a denied call in %s', async locale => {
     setMainLocale(locale);
     expect(new GroupToolAuthorizationError(true).message).not.toContain('groupTools.');
     await expect(authorizeGroupTool('unregistered', 'bot', 'owner-action')).rejects.toMatchObject({

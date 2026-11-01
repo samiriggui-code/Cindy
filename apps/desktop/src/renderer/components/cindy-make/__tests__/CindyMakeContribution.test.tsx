@@ -3,11 +3,8 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createInstance } from 'i18next';
 import { I18nextProvider } from 'react-i18next';
-import zhCN from '@/i18n/locales/zh-CN/common.json';
 import en from '@/i18n/locales/en/common.json';
-import zhTW from '@/i18n/locales/zh-TW/common.json';
-import ja from '@/i18n/locales/ja/common.json';
-import ko from '@/i18n/locales/ko/common.json';
+import fr from '@/i18n/locales/fr/common.json';
 import {
   CindyMakeContributionDialog,
   CindyMakeContributionStatus,
@@ -20,7 +17,7 @@ import {
 
 vi.mock('@/lib/toast', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
-const copy = zhCN.cindyMake.contribution;
+const copy = fr.cindyMake.contribution;
 
 async function i18nFor(locale: string, resource: object) {
   const i18n = createInstance();
@@ -53,7 +50,7 @@ async function renderDialog(invoke: ReturnType<typeof vi.fn>) {
   const onOpenChange = vi.fn();
   const onSubmitted = vi.fn();
   render(
-    <I18nextProvider i18n={await i18nFor('zh-CN', zhCN)}>
+    <I18nextProvider i18n={await i18nFor('fr', fr)}>
       <CindyMakeContributionDialog
         runId="run-1"
         onOpenChange={onOpenChange}
@@ -210,7 +207,7 @@ describe('CindyMakeContributionStatus', () => {
     vi.stubGlobal('electronAPI', { openExternal });
     const url = 'https://github.com/makecindy/cindy/pull/9';
     render(
-      <I18nextProvider i18n={await i18nFor('zh-CN', zhCN)}>
+      <I18nextProvider i18n={await i18nFor('fr', fr)}>
         <CindyMakeContributionStatus
           view={{ runId: 'r', number: 9, url, state: 'merged', submittedAt: 1 }}
         />
@@ -234,11 +231,8 @@ describe('CindyMakeContributionStatus', () => {
 
 describe('contribution copy', () => {
   it.each([
-    ['zh-CN', zhCN],
-    ['zh-TW', zhTW],
+    ['fr', fr],
     ['en', en],
-    ['ja', ja],
-    ['ko', ko],
   ] as const)('covers every error and state in %s', (_locale, resource) => {
     const strings = resource.cindyMake.contribution;
     for (const code of CINDY_MAKE_CONTRIBUTION_ERRORS)

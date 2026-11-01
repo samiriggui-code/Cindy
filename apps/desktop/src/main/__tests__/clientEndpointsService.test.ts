@@ -135,7 +135,7 @@ describe('启动失败系统提示框', () => {
         offlineSavedAt: null,
       },
       'https://hotfix.cindy.app/cindy/endpoint.json',
-      'zh-CN',
+      'fr',
     );
 
     expect(choice).toBe('retry');
@@ -148,11 +148,10 @@ describe('启动失败系统提示框', () => {
     };
     const visibleText = `${options.message}\n${options.detail}\n${options.buttons.join('\n')}`;
     expect(options.type).toBe('warning');
-    expect(options.message).toBe('Cindy 暂时无法连接');
-    expect(visibleText).toContain('请确认设备已联网');
-    expect(visibleText).toContain('错误信息：ERR_CONNECTION_RESET');
-    expect(visibleText).toContain('复制诊断信息');
-    expect(visibleText).not.toContain('截图');
+    expect(options.message).toBe('Cindy n’a pas pu se connecter');
+    expect(visibleText).toContain('Vérifiez que cet appareil est en ligne');
+    expect(visibleText).toContain('Erreur : ERR_CONNECTION_RESET');
+    expect(visibleText).toContain('Copier les diagnostics');
     expect(visibleText).not.toContain('CINDY-NET-');
     expect(visibleText).not.toContain('43.146.61.38');
     expect(visibleText).not.toContain('proxy=DIRECT');
@@ -171,7 +170,7 @@ describe('启动失败系统提示框', () => {
         offlineSavedAt: null,
       },
       'https://hotfix.cindy.app/cindy/endpoint.json',
-      'zh-CN',
+      'fr',
     );
 
     expect(choice).toBe('retry');
@@ -181,7 +180,7 @@ describe('启动失败系统提示框', () => {
     expect(clipboardWriteText.mock.calls[0]?.[0]).toContain('hotfix.cindy.app');
     expect(clipboardWriteText.mock.calls[0]?.[0]).toContain('proxy=DIRECT');
     expect(clipboardWriteText.mock.calls[0]?.[0]).toContain('/Users/example');
-    expect(showMessageBoxSync.mock.calls[1]?.[0].detail).toContain('诊断信息已复制');
+    expect(showMessageBoxSync.mock.calls[1]?.[0].detail).toContain('Diagnostics copiés');
   });
 
   it('复制诊断失败时在弹框内明确提示,不误报为已复制', () => {
@@ -199,13 +198,13 @@ describe('启动失败系统提示框', () => {
         offlineSavedAt: null,
       },
       'https://hotfix.cindy.app/cindy/endpoint.json',
-      'zh-CN',
+      'fr',
     );
 
     expect(choice).toBe('retry');
     expect(showMessageBoxSync).toHaveBeenCalledTimes(2);
-    expect(showMessageBoxSync.mock.calls[1]?.[0].detail).toContain('诊断信息未能复制');
-    expect(showMessageBoxSync.mock.calls[1]?.[0].detail).not.toContain('诊断信息已复制');
+    expect(showMessageBoxSync.mock.calls[1]?.[0].detail).toContain('Impossible de copier les diagnostics');
+    expect(showMessageBoxSync.mock.calls[1]?.[0].detail).not.toContain('Diagnostics copiés');
   });
 });
 
