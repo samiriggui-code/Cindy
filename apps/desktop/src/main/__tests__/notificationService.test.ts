@@ -1030,7 +1030,7 @@ describe('notificationService — channels 分发', () => {
     // 文案断言 — 锁住对外可见的飞书消息格式,后续如要改文案需主动调整测试。
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledWith(
       'ou_owner',
-      'Cindy · La session « Hello » a besoin de votre réponse',
+      'Cindy · La tâche « Hello » a besoin de votre réponse',
     );
   });
 
@@ -1050,7 +1050,7 @@ describe('notificationService — channels 分发', () => {
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledTimes(1);
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledWith(
       'ou_owner',
-      'Cindy · Séance « Hello » terminée ✓',
+      'Cindy · Tâche « Hello » terminée ✓',
     );
     expect(feishuIm.sendText).not.toHaveBeenCalled();
   });
@@ -1084,7 +1084,7 @@ describe('notificationService — channels 分发', () => {
 
     await invokeHandler({ sessionId: 'bot-main', title: 'Old title', kind: 'done', channels: { desktop: false, feishu: true } });
 
-    expect(feishuIm.sendText).toHaveBeenCalledWith('ou_owner', 'Mika\nImages');
+    expect(feishuIm.sendText).toHaveBeenCalledWith('ou_owner', 'Mika\nImage');
     expect(feishuIm.sendMarkdownText).not.toHaveBeenCalled();
   });
 
@@ -1150,7 +1150,7 @@ describe('notificationService — channels 分发', () => {
     );
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledWith(
       'ou_owner',
-      'Cindy · La session « Broken model » a échoué',
+      'Cindy · La tâche « Broken model » a échoué',
     );
   });
 

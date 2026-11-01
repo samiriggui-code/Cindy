@@ -64,13 +64,13 @@ describe('model harness choices', () => {
         customized: false, wireModelId: capability.wireModelId }} state="recommended" sourceLabel="Cindy AI" price={null}
       effortLabelOf={(_, effort) => effort} onEngineChange={vi.fn()} onEffortChange={vi.fn()}
       onFastChange={vi.fn()} onResetToRecommended={vi.fn()} onAddFavorite={vi.fn()} onRemoveFavorite={vi.fn()} />);
-    expect(await screen.findByText('Cindy AI · contexte 1K')).toBeTruthy();
+    expect(await screen.findByText('Cindy AI · 1K de contexte')).toBeTruthy();
     expect(getModelContextLimit).toHaveBeenCalledWith({ providerId: 'xd', agent, modelId: capability.wireModelId });
     getModelContextLimit.mockResolvedValue({ limit: null, isCustomized: false,
       codexContext: { contextWindow: 1_048_576 } });
     await act(async () => { changed?.(); });
-    expect(screen.queryByText('Cindy AI · contexte 1K')).toBeNull();
-    expect(screen.getByText(/Cindy AI · contexte 1M/)).toBeTruthy();
+    expect(screen.queryByText('Cindy AI · 1K de contexte')).toBeNull();
+    expect(screen.getByText(/Cindy AI · 1M de contexte/)).toBeTruthy();
     rendered.unmount();
     expect(unsubscribe).toHaveBeenCalled();
     Reflect.deleteProperty(window, 'electronAPI');

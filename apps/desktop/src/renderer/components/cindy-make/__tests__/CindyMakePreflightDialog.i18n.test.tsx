@@ -58,9 +58,9 @@ describe('Cindy Make close confirmation with real translations', () => {
     {
       locale: 'fr',
       resource: fr,
-      close: 'Rejeter',
-      title: 'Fermer Cindy Make?',
-      keep: 'Continuer à regarder',
+      close: 'Ignorer',
+      title: 'Fermer Cindy Make ?',
+      keep: 'Continuer à consulter',
       source: 'La préparation des sources est toujours en cours.',
       complete: "Les préparatifs sont terminés, mais les travaux n'ont pas commencé.",
     },

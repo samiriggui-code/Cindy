@@ -17,8 +17,7 @@ import { __testing as localGroupsTesting, useLocalProviderGroupsState } from '..
 import { __testing as groupViewTesting } from '../useProviderGroup';
 
 let realLocale: ReturnType<typeof createInstance> | null = null;
-const QUOTA_FIRST_HINT =
-  "Lorsque l'utilisation de l'abonnement est disponible, les ordinateurs dont le quota est bientôt réinitialisé et qui en ont encore beaucoup sont les premiers, de sorte que chaque compte est utilisé uniformément au fil du temps ; les similaires suivent la stratégie du groupe";
+const QUOTA_FIRST_HINT = fr.providerGroup.strategy.quotaFirst;
 const providerState = vi.hoisted(() => ({ providers: [
   { id: 'anthropic', connected: true, auth: { method: 'oauth', native: 'claude' } },
 ] }));
@@ -214,15 +213,15 @@ describe('ProviderGroupSection', () => {
     render(<ProviderGroupSection providerId="anthropic" providerName="Anthropic" />);
     const rows = await screen.findAllByTestId('provider-group-member');
     await waitFor(() => expect(within(rows[1]).getByTestId('provider-group-member-reshare-summary').textContent)
-      .toBe("1 personne avec qui vous partagez attend que Kai soit d'accord"));
+      .toBe("1 personne avec qui vous partagez attend l'accord de Kai"));
     // 本机这一行不显示。
     expect(within(rows[0]).queryByTestId('provider-group-member-reshare-summary')).toBeNull();
     expect(screen.queryByTestId('provider-group-member-reshare')).toBeNull();
     fireEvent.click(rows[1].querySelector<HTMLButtonElement>('button[aria-expanded]')!);
     const list = within(rows[1]).getByTestId('provider-group-member-reshare');
-    expect(list.textContent).toContain("Kai s'accorde personne par personne");
+    expect(list.textContent).toContain("Kai donne son accord personne par personne");
     const guests = within(list).getAllByTestId('provider-group-member-reshare-guest');
-    expect(guests.map((guest) => guest.textContent)).toEqual(['CCarolEn attente', "DDaveD'accord"]);
+    expect(guests.map((guest) => guest.textContent)).toEqual(['CCarolEn attente', 'DDaveAccepté']);
   });
 
   it('expands a computer to show the quota of its own account', async () => {
@@ -319,7 +318,7 @@ describe('ProviderGroupSection', () => {
     render(<ProviderGroupSection providerId="anthropic" providerName="Claude" />);
     expect(await screen.findByText(QUOTA_FIRST_HINT, { normalizer: (value) => value })).toBeTruthy();
     expect(screen.getByRole('radio', { name: 'Le moins occupé' }).getAttribute('aria-checked')).toBe('true');
-    expect(screen.getByText('Va au moins occupé')).toBeTruthy();
+    expect(screen.getByText("Attribue à l'ordinateur le moins occupé")).toBeTruthy();
     fireEvent.click(screen.getByRole('radio', { name: "Dans l'ordre" }));
     await waitFor(() => expect(stored?.strategy).toBe('order'));
   });

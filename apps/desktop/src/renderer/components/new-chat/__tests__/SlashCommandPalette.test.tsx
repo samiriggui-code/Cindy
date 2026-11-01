@@ -122,7 +122,7 @@ describe('SlashCommandPalette project Skill rows', () => {
 
   it('uses the automatic loading copy without a trust or admission action', () => {
     expect(frCommon.commandPalette.projectSkillNotLoaded).toBe(
-      "Cette tâche Pi n'a pas chargé cette compétence de projet. Les nouvelles tâches tenteront automatiquement de le charger.",
+      "Cette tâche Pi n'a pas chargé cette compétence de projet. Les nouvelles tâches tenteront automatiquement de la charger.",
     );
     expect(frCommon.commandPalette).not.toHaveProperty('projectTrustRequired');
     expect(frCommon.commandPalette).not.toHaveProperty('projectSkillConfirmAction');

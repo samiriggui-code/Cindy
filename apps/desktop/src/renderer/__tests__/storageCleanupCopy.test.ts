@@ -20,7 +20,7 @@ describe('storage cleanup copy', () => {
 
   it.each([
     ['en', en, ['database backup', 'review or undo', 'cannot be restored']],
-    ['fr', fr, ['sauvegarde de base de données', 'examiner ou annuler', 'ne peuvent pas être restaurés']],
+    ['fr', fr, ['sauvegarde de la base de données', 'examiner ou annuler', 'ne peuvent pas être restaurés']],
   ] as const)(
     '%s states that file-change review and undo records are excluded from the database backup',
     (_locale, messages, expectedFragments) => {

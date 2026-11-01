@@ -113,7 +113,7 @@ describe('buildMenubarView', () => {
     const view = buildMenubarView(input([quota], { locale: 'fr' }));
     expect(view.sources[0]).toMatchObject({ when: 'Réinitialisation en 20j 3h' });
     expect(view.sources[0].fill).toBeCloseTo(0.9998);
-    expect(view.headlinePrimary).toBe('Votre quota Cindy a encore de la place.');
+    expect(view.headlinePrimary).toBe('Il reste de la marge sur votre quota Cindy.');
     expect(view.details.cindy).toMatchObject({ title: 'Quota de Cindy', action: { kind: 'open-settings' } });
     const dailyFact = view.details.cindy.facts.find(fact => fact.label === "Dépensé aujourd'hui");
     if (dailyLimitEnabled === false) expect(dailyFact).toBeUndefined();
@@ -211,7 +211,7 @@ describe('buildMenubarView', () => {
 
   it('localizes the headline', () => {
     const view = buildMenubarView(input([codex('alpha', 80), codex('beta', 20)], { locale: 'fr' }));
-    expect(view.headlinePrimary).toBe('Il en reste beta.');
+    expect(view.headlinePrimary).toBe('beta a le plus de marge.');
   });
 });
 

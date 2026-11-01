@@ -30,13 +30,13 @@ const CASES: Array<{
   {
     locale: 'fr',
     title: 'Rapport',
-    untitled: 'Séance sans titre',
+    untitled: 'Tâche sans titre',
     done: 'Terminé ✓',
     error: 'Échec',
     needsReply: 'Réponse nécessaire',
-    externalDone: 'Cindy · Séance « Rapport » terminée ✓',
-    externalError: 'Cindy · La session « Rapport » a échoué',
-    externalNeedsReply: 'Cindy · La session « Rapport » a besoin de votre réponse',
+    externalDone: 'Cindy · Tâche « Rapport » terminée ✓',
+    externalError: 'Cindy · La tâche « Rapport » a échoué',
+    externalNeedsReply: 'Cindy · La tâche « Rapport » a besoin de votre réponse',
   },
   {
     locale: 'en',

@@ -44,11 +44,11 @@ afterEach(cleanup);
 
 describe('Cindy Make source summary', () => {
   it.each([
-    [0, 0, 'Même SHA que le principal local'],
-    [0, 6, 'Le principal local comporte 6 enregistrements de modifications non encore inclus'],
-    [2, 0, 'Inclut la source locale principale · personnelle contenant 2 enregistrements de modifications supplémentaires'],
-    [2, 6, 'La source principale locale contient 6 enregistrements de modifications non encore inclus · la source personnelle contient 2 enregistrements de modifications supplémentaires'],
-    [undefined, undefined, 'SHA différent du principal local ; différence inconnue'],
+    [0, 0, 'Même SHA que le main local'],
+    [0, 6, 'Le main local a 6 modifications non encore incluses'],
+    [2, 0, 'Inclut le main local · la source personnelle contient 2 modifications supplémentaires'],
+    [2, 6, 'Le main local a 6 modifications non encore incluses · la source personnelle contient 2 modifications supplémentaires'],
+    [undefined, undefined, 'SHA différent du main local ; écart inconnu'],
   ] as const)(
     'summarizes the verified local comparison (%s ahead, %s behind)',
     async (personalAhead, personalBehind, expected) => {
@@ -60,7 +60,7 @@ describe('Cindy Make source summary', () => {
       });
       expect(screen.getByText(expected)).toBeTruthy();
       expect(screen.getByRole('status').getAttribute('aria-label')).toBe(
-        'cindy-personnel · État de la version non vérifié',
+        'cindy-personal · État de la version non vérifié',
       );
       expect(screen.getByRole('status').className).not.toContain('--status-success');
       expect(screen.queryByTitle(source.commit!)).toBeNull();
@@ -101,7 +101,7 @@ describe('Cindy Make source summary', () => {
       expect(screen.getByText(fr.cindyMake.source.details.latest[channel])).toBeTruthy();
       expect(screen.getByText(ref)).toBeTruthy();
       expect(screen.getByText(source.mainCommit!.slice(0, 12))).toBeTruthy();
-      expect(screen.queryByText(/Principal local \(en retard/)).toBeNull();
+      expect(screen.queryByText(/Main local \(en retard/)).toBeNull();
     },
   );
 
@@ -117,10 +117,10 @@ describe('Cindy Make source summary', () => {
     const hash = screen.getByTitle(source.mainCommit!);
     expect(hash.className).toContain('--status-success');
     expect(screen.getAllByTitle(source.mainCommit!)).toHaveLength(1);
-    expect(screen.getByText('Principal local').className).toContain('--status-success');
+    expect(screen.getByText('Main local').className).toContain('--status-success');
     expect(hash.closest('dd')?.querySelector('svg')).toBeNull();
-    expect(screen.getByText("Correspond à Principal GitHub, 0 changement d'enregistrement derrière")).toBeTruthy();
-    expect(screen.queryByText(/Le principal local est/)).toBeNull();
+    expect(screen.getByText("Identique à main GitHub, 0 modification de retard")).toBeTruthy();
+    expect(screen.queryByText(/Le main local a/)).toBeNull();
   });
 
   it.each(Object.keys(locales) as (keyof typeof locales)[])(
@@ -170,8 +170,8 @@ describe('Cindy Make source summary', () => {
       ref: 'main',
       commit: source.mainCommit!,
     });
-    const status = screen.getByRole('status', { name: 'cindy-personnel · Mise à jour disponible' });
-    expect(status.textContent).toBe('cindy-personnel (Mise à jour disponible)');
+    const status = screen.getByRole('status', { name: 'cindy-personal · Mise à jour disponible' });
+    expect(status.textContent).toBe('cindy-personal (Mise à jour disponible)');
     expect(status.className).toContain('--upgrade-banner-fg');
     expect(status.firstElementChild?.tagName.toLowerCase()).toBe('svg');
     expect(screen.getByText('(Mise à jour disponible)')).toBeTruthy();
@@ -204,7 +204,7 @@ describe('Cindy Make source summary', () => {
         },
       );
       expect(screen.getByRole('status').getAttribute('aria-label')).toBe(
-        `cindy-personnel · ${expected}`,
+        `cindy-personal · ${expected}`,
       );
       expect(screen.getByRole('status').className).not.toContain('--status-success');
     },
@@ -219,8 +219,8 @@ describe('Cindy Make source summary', () => {
         ref: 'main',
         commit: source.commit!,
       });
-      expect(screen.getByRole('status', { name: 'cindy-personnel · À jour' })).toBeTruthy();
-      expect(screen.queryByText(/enregistrements de modifications supplémentaires/)).toBeNull();
+      expect(screen.getByRole('status', { name: 'cindy-personal · À jour' })).toBeTruthy();
+      expect(screen.queryByText(/modifications supplémentaires/)).toBeNull();
     },
   );
 
@@ -233,10 +233,10 @@ describe('Cindy Make source summary', () => {
       ahead: 3,
       behind: 0,
     });
-    const status = screen.getByRole('status', { name: 'cindy-personnel · À jour' });
+    const status = screen.getByRole('status', { name: 'cindy-personal · À jour' });
     fireEvent.focus(status);
     expect((await screen.findByRole('tooltip')).textContent).toBe(
-      'À jour · La source personnelle inclut toutes les mises à jour de Dernière version',
+      'À jour · La source personnelle inclut toutes les mises à jour de Dernière version stable',
     );
   });
 
@@ -249,9 +249,9 @@ describe('Cindy Make source summary', () => {
   });
 
   it.each([
-    { ahead: 0, behind: 24, expected: 'Le principal local est 24 enregistrements de modifications derrière' },
-    { ahead: 3, behind: 0, expected: "Le principal local est 3 modifier les enregistrements à l'avance" },
-    { ahead: 2, behind: 7, expected: 'Local principal : 7 modifier les enregistrements en retard, 2 modifier les enregistrements en avance' },
+    { ahead: 0, behind: 24, expected: 'Le main local a 24 modifications de retard' },
+    { ahead: 3, behind: 0, expected: "Le main local a 3 modifications d'avance" },
+    { ahead: 2, behind: 7, expected: "Main local : 7 modifications de retard, 2 modifications d'avance" },
   ])(
     'keeps the difference compact without hiding a nonzero side: $expected',
     async ({ ahead, behind, expected }) => {
@@ -265,7 +265,7 @@ describe('Cindy Make source summary', () => {
       });
       expect(screen.getByText(expected)).toBeTruthy();
       expect(screen.getByText(expected).className).not.toContain('--status-success');
-      expect(screen.queryByText(/(?:Le principal local est|Local principal :) 0/)).toBeNull();
+      expect(screen.queryByText(/(?:Le main local a|Main local :) 0/)).toBeNull();
     },
   );
 
@@ -320,15 +320,15 @@ describe('Cindy Make source summary', () => {
       ahead: 0,
       behind: 23,
     });
-    expect(screen.getByRole('status', { name: 'cindy-personnel · Mise à jour disponible' })).toBeTruthy();
+    expect(screen.getByRole('status', { name: 'cindy-personal · Mise à jour disponible' })).toBeTruthy();
     expect(
       screen.getByText(
-        'La source principale locale contient 2 enregistrements de modifications non encore inclus · la source personnelle contient 3 enregistrements de modifications supplémentaires',
+        'Le main local a 2 modifications non encore incluses · la source personnelle contient 3 modifications supplémentaires',
       ),
     ).toBeTruthy();
     const online = screen.getByText('e'.repeat(12)).closest('dd')!;
-    expect(online.textContent).toContain('Le principal local est 23 enregistrements de modifications derrière');
-    expect(within(online).queryByText(/Le principal local est 2 /)).toBeNull();
+    expect(online.textContent).toContain('Le main local a 23 modifications de retard');
+    expect(within(online).queryByText(/Le main local a 2 /)).toBeNull();
   });
 
   it('shows unknown counts even when the online hash is available', async () => {
@@ -338,19 +338,19 @@ describe('Cindy Make source summary', () => {
       ref: 'main',
       commit: 'e'.repeat(40),
     });
-    expect(screen.getByText('Comparaison principale locale indisponible')).toBeTruthy();
-    expect(screen.queryByText(/Correspond à/)).toBeNull();
+    expect(screen.getByText('Comparaison avec le main local indisponible')).toBeTruthy();
+    expect(screen.queryByText(/Identique à/)).toBeNull();
   });
 
   it('keeps missing local hashes unknown for old snapshots', async () => {
     await show({ mainCommit: undefined, currentBranch: undefined, ref: 'v1.2.3' });
-    expect(screen.getByText('Principal local').nextElementSibling?.firstElementChild?.textContent).toBe(
-      'Pas lu',
+    expect(screen.getByText('Main local').nextElementSibling?.firstElementChild?.textContent).toBe(
+      'Non lu',
     );
     expect(screen.queryByText(source.commit!.slice(0, 12))).toBeNull();
     expect(screen.queryByText(source.baseCommit!.slice(0, 12))).toBeNull();
     expect(screen.queryByText(source.mainRemoteCommit!.slice(0, 12))).toBeNull();
-    expect(screen.queryByText(/Correspond à/)).toBeNull();
+    expect(screen.queryByText(/Identique à/)).toBeNull();
   });
 
   it('recognizes matching hashes even without comparison counts', async () => {
@@ -360,8 +360,8 @@ describe('Cindy Make source summary', () => {
       ref: 'main',
       commit: source.mainCommit!,
     });
-    expect(screen.getByRole('status', { name: 'cindy-personnel · À jour' })).toBeTruthy();
-    expect(screen.getByText("Correspond à Principal GitHub, 0 changement d'enregistrement derrière")).toBeTruthy();
+    expect(screen.getByRole('status', { name: 'cindy-personal · À jour' })).toBeTruthy();
+    expect(screen.getByText("Identique à main GitHub, 0 modification de retard")).toBeTruthy();
   });
 
   it('does not claim different hashes match because of inconsistent zero counts', async () => {
@@ -373,10 +373,10 @@ describe('Cindy Make source summary', () => {
       ahead: 0,
       behind: 0,
     });
-    expect(screen.getByRole('status', { name: 'cindy-personnel · État de la version non vérifié' })).toBeTruthy();
-    expect(screen.getByText('SHA différent du principal local ; différence inconnue')).toBeTruthy();
-    expect(screen.getByText('Comparaison principale locale indisponible')).toBeTruthy();
-    expect(screen.queryByText(/Correspond à/)).toBeNull();
+    expect(screen.getByRole('status', { name: 'cindy-personal · État de la version non vérifié' })).toBeTruthy();
+    expect(screen.getByText('SHA différent du main local ; écart inconnu')).toBeTruthy();
+    expect(screen.getByText('Comparaison avec le main local indisponible')).toBeTruthy();
+    expect(screen.queryByText(/Identique à/)).toBeNull();
   });
 
   it('shows a gray local SHA pointing to the green online SHA on the same row', async () => {
@@ -396,7 +396,7 @@ describe('Cindy Make source summary', () => {
     expect(online.closest('dd')).toBe(local.closest('dd'));
     expect(local.closest('dd')?.querySelector('svg')).not.toBeNull();
     expect(container.querySelectorAll('dl > div > dd')).toHaveLength(2);
-    expect(screen.getByText('Le principal local est 3 enregistrements de modifications derrière')).toBeTruthy();
+    expect(screen.getByText('Le main local a 3 modifications de retard')).toBeTruthy();
   });
 
   it.each(Object.keys(locales) as (keyof typeof locales)[])(

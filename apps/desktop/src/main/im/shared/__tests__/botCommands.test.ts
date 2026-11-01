@@ -52,7 +52,7 @@ describe('bot command registry', () => {
   it('Telegram /new menu copy says it creates a session/task in every locale', () => {
     expect([en.settings.telegramBot.commandMenu.new, fr.settings.telegramBot.commandMenu.new]).toEqual([
       'Create a new session',
-      'Créer une nouvelle session',
+      'Créer une nouvelle tâche',
     ]);
   });
 

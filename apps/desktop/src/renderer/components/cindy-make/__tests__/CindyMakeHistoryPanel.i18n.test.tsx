@@ -33,11 +33,11 @@ const cases = [
   {
     locale: 'fr',
     resource: fr,
-    title: "Faire l'histoire · Tâches : 1",
+    title: 'Historique Make · Tâches : 1',
     conflict: 'Résoudre les conflits',
     build: 'Reconstruire la version personnelle',
     integrate: 'Intégrer dans la version personnelle',
-    counts: "1 réaliser des tâches · 1 en attente d'intégration · 0 intégré",
+    counts: "1 tâches de création · 1 en attente d'intégration · 0 intégrées",
     script: /[a-z]/i,
   },
 ];

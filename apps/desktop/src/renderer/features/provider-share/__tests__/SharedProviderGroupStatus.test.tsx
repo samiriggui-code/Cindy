@@ -57,7 +57,7 @@ describe('received provider group status', () => {
   it('counts busy computers as usable and never renders injected identity or usage', async () => {
     invoke.mockResolvedValue(payload(['busy', { state: 'available', label: 'SECRET NAME', running: 777 }]));
     await act(async () => { render(element()); });
-    expect(screen.getByRole('status').textContent).toBe('1 des 2 ordinateurs peuvent accepter des tâches');
+    expect(screen.getByRole('status').textContent).toBe('1 sur 2 ordinateurs peuvent accepter des tâches');
     expect(screen.getByText('Occupé, peut accepter des tâches')).toBeTruthy();
     expect(screen.getByText('Statut inconnu')).toBeTruthy();
     expect(document.body.textContent).not.toMatch(/SECRET NAME|777/);
@@ -73,7 +73,7 @@ describe('received provider group status', () => {
     invoke.mockResolvedValue(payload(['cooling', 'paused']));
     await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Actualiser le statut' })); });
     expect(screen.getByText('Aucun ordinateur ne peut accepter de tâches pour le moment. Demandez au partageur de vérifier.')).toBeTruthy();
-    expect(screen.getByText('Refroidissement, pas de nouvelles tâches')).toBeTruthy();
+    expect(screen.getByText('En pause temporaire, aucune nouvelle tâche')).toBeTruthy();
   });
 
   it('does not call an old host healthy or unavailable when it supplies no statuses', async () => {

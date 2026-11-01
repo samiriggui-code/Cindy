@@ -25,7 +25,7 @@ describe('group failure notice', () => {
     const text = screen.getByText(/a atteint sa limite/).textContent;
     expect(text).toContain('Bot');
     expect(text).toContain(reason);
-    expect(text).toContain('Remote');
+    expect(text).toContain('À distance et partage');
   });
   it('does not render an unknown or private diagnostic as group content', () => {
     const { container } = render(<BotGroupRuntimeFailureNotice name="m" code="private-token-and-path" />);

@@ -13,7 +13,7 @@ describe('cronToHuman', () => {
     expect(cronToHuman('0 2 * * *', t, 'fr')).toBe('Tous les jours à 02:00');
     expect(cronToHuman('0 10 * * 1-5', t, 'fr')).toBe('En semaine à 10:00');
     expect(cronToHuman('0 16 * * 5', t, 'fr')).toBe('ven. à 16:00');
-    expect(cronToHuman('0 10 1 * *', t, 'fr')).toBe('Mensuel le jour 1 à 10:00');
+    expect(cronToHuman('0 10 1 * *', t, 'fr')).toBe('Tous les mois, le jour 1 à 10:00');
   });
 
   it('localizes month-restricted schedules', () => {
@@ -22,7 +22,7 @@ describe('cronToHuman', () => {
   // Regression: hourly lists fell back to English and elided the actual hours.
   // Production formatter; prior tests only covered daily templates. Unit tier.
   it.each([
-    ['5 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 * * *', 'Horaire à la minute 05'],
+    ['5 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 * * *', 'Toutes les heures à la minute 05'],
     ['19 0,6,12,23 * * *', 'À 00:19, 06:19, 12:19, 23:19'],
     ['*/20 9-17 * * 1-5', 'lun., mar., mer., jeu., ven. · Heures 9–17, minutes 0, 20, 40'],
     ['0 9 1 * 1', 'Jours 1 du mois ou lun. · À 09:00'],

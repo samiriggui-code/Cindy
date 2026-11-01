@@ -8,7 +8,7 @@ afterEach(() => setMainLocale('en'));
 describe('buildReviewSessionTitle', () => {
   it.each([
     ['en', 'Review · Source task'],
-    ['fr', 'Révision · Source task'],
+    ['fr', 'Revue · Source task'],
   ] as const)('uses the active %s locale', (locale, expected) => {
     setMainLocale(locale);
     expect(buildReviewSessionTitle('Source task')).toBe(expected);

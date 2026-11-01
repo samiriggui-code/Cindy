@@ -162,7 +162,7 @@ describe('feishu ImChannelAdapter characterization', () => {
 
       setMainLocale('fr');
       expect(copy('acceptEdits')).toBe(
-        "L'agent actuel ne peut pas s'exécuter sur ce canal dans ce mode d'autorisation, les messages ne peuvent donc pas être traités. Envoyez /autorisation pour choisir un mode pris en charge.",
+        "L'agent actuel ne peut pas s'exécuter sur ce canal dans ce mode d'autorisation ; les messages ne peuvent donc pas être traités. Envoyez /permission pour choisir un mode pris en charge.",
       );
     } finally {
       setMainLocale(originalLocale);

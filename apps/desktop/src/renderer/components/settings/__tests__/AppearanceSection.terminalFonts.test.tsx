@@ -104,8 +104,8 @@ describe('AppearanceSection terminal fonts', () => {
 
   it('reuses custom font entry and keeps terminal and code font selections independent', () => {
     renderSettings();
-    const terminalPicker = screen.getByRole('button', { name: 'Sélectionnez la police du terminal' });
-    const codePicker = screen.getByRole('button', { name: 'Sélectionnez la police du code' });
+    const terminalPicker = screen.getByRole('button', { name: 'Sélectionner la police du terminal' });
+    const codePicker = screen.getByRole('button', { name: 'Sélectionner la police du code' });
 
     fireEvent.click(terminalPicker);
     fireEvent.change(screen.getByPlaceholderText(fr.settings.appearance.font.customPlaceholder), {
@@ -116,7 +116,7 @@ describe('AppearanceSection terminal fonts', () => {
     );
 
     expect(terminalPicker.textContent).toBe('Menlo');
-    expect(codePicker.textContent).toBe('Style du Codex (par défaut)');
+    expect(codePicker.textContent).toBe('Style Codex (par défaut)');
     expect(
       screen.queryByPlaceholderText(fr.settings.appearance.font.customPlaceholder),
     ).toBeNull();
@@ -132,7 +132,7 @@ describe('AppearanceSection terminal fonts', () => {
     expect(terminalPicker.textContent).toBe('Menlo');
 
     fireEvent.click(
-      within(terminalPicker.parentElement!).getByRole('button', { name: 'Réinitialiser aux valeurs par défaut' }),
+      within(terminalPicker.parentElement!).getByRole('button', { name: 'Rétablir les valeurs par défaut' }),
     );
     expect(terminalPicker.textContent).toBe('Monospace (par défaut)');
     expect(codePicker.textContent).toBe('Consolas');
@@ -140,13 +140,13 @@ describe('AppearanceSection terminal fonts', () => {
 
   it('applies the existing JetBrains Mono preset only to the terminal', () => {
     renderSettings();
-    const terminalPicker = screen.getByRole('button', { name: 'Sélectionnez la police du terminal' });
+    const terminalPicker = screen.getByRole('button', { name: 'Sélectionner la police du terminal' });
     fireEvent.click(terminalPicker);
     fireEvent.click(screen.getByRole('option', { name: 'JetBrains Mono' }));
 
     expect(terminalPicker.textContent).toBe('JetBrains Mono');
-    expect(screen.getByRole('button', { name: 'Sélectionnez la police du code' }).textContent).toBe(
-      'Style du Codex (par défaut)',
+    expect(screen.getByRole('button', { name: 'Sélectionner la police du code' }).textContent).toBe(
+      'Style Codex (par défaut)',
     );
     expect(document.documentElement.style.getPropertyValue('--app-font-code')).toBe('');
   });
@@ -172,13 +172,13 @@ describe('AppearanceSection terminal fonts', () => {
     expect(size.value).toBe('11');
 
     fireEvent.click(
-      within(size.parentElement!.parentElement!).getByRole('button', { name: 'Réinitialiser aux valeurs par défaut' }),
+      within(size.parentElement!.parentElement!).getByRole('button', { name: 'Rétablir les valeurs par défaut' }),
     );
     expect(size.value).toBe('13');
     expect((screen.getByRole('spinbutton', { name: 'Taille de la police du code' }) as HTMLInputElement).value).toBe(
       '14',
     );
-    expect((screen.getByRole('spinbutton', { name: "Taille de la police de l'interface utilisateur" }) as HTMLInputElement).value).toBe(
+    expect((screen.getByRole('spinbutton', { name: "Taille de la police de l'interface" }) as HTMLInputElement).value).toBe(
       '14',
     );
   });

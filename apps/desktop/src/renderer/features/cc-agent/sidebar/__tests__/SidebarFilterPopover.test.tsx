@@ -109,8 +109,8 @@ describe('sidebar display settings menu', () => {
     expect(enumerate).not.toHaveBeenCalled();
     rerender(<SidebarFilterPopover filter={filter} allKnownProjects={projects} open />);
     expect(enumerate).toHaveBeenCalled();
-    const submenu = await openSubmenu(/^Tri de session/);
-    fireEvent.click(within(submenu).getByRole('menuitem', { name: 'Temps de création' }));
+    const submenu = await openSubmenu(/^Tri des tâches/);
+    fireEvent.click(within(submenu).getByRole('menuitem', { name: 'Date de création' }));
     expect(filter.setSortBy).toHaveBeenCalledWith('created');
   });
 
@@ -121,18 +121,18 @@ describe('sidebar display settings menu', () => {
     const rows = within(root).getAllByRole('menuitem');
     expect(rows.map((row) => row.querySelector('span')?.textContent)).toEqual([
       'Regrouper par',
-      'Tri de session',
+      'Tri des tâches',
       'Tri des projets',
-      'Statut de la session',
+      'Statut de la tâche',
       'Filtres',
       'Affichage',
-      'Informations sur la séance',
+      'Informations sur la tâche',
     ]);
     for (const row of rows) expect(row.querySelector('svg')).not.toBeNull();
     expect(rows[3].querySelector('.lucide-list-checks')).not.toBeNull();
-    expect(rows[0].textContent).toContain('Projet, Discuter, Appareil');
-    expect(rows[2].textContent).toContain('Suivre les séances');
-    const submenu = await openSubmenu(/^Tri de session/);
+    expect(rows[0].textContent).toContain('Projet, Discussion, Appareil');
+    expect(rows[2].textContent).toContain('Suivre les tâches');
+    const submenu = await openSubmenu(/^Tri des tâches/);
     // PR #6196: preserve the historical glass-menu clipping regression through
     // real unit DOM containment; content/click assertions alone miss a lost portal.
     expect(root.contains(submenu)).toBe(false);
@@ -141,15 +141,15 @@ describe('sidebar display settings menu', () => {
       within(submenu)
         .getAllByRole('menuitem')
         .map((row) => row.textContent),
-    ).toEqual(['Priorité', 'Activité récente', 'Temps de création']);
-    fireEvent.click(within(submenu).getByRole('menuitem', { name: 'Temps de création' }));
+    ).toEqual(['Priorité', 'Activité récente', 'Date de création']);
+    fireEvent.click(within(submenu).getByRole('menuitem', { name: 'Date de création' }));
     expect(filter.setSortBy).toHaveBeenCalledWith('created');
     expect(screen.getAllByRole('menu')).toHaveLength(2);
-    expect(within(submenu).getByRole('menuitem', { name: 'Temps de création' })).not.toBeNull();
-    const statusMenu = await openSubmenu(/^Statut de la session/);
+    expect(within(submenu).getByRole('menuitem', { name: 'Date de création' })).not.toBeNull();
+    const statusMenu = await openSubmenu(/^Statut de la tâche/);
     expect(
       within(statusMenu)
-        .getByRole('menuitem', { name: 'Actif' })
+        .getByRole('menuitem', { name: 'Actives' })
         .querySelector('.lucide-circle-dot'),
     ).not.toBeNull();
   });
@@ -158,11 +158,11 @@ describe('sidebar display settings menu', () => {
     const filter = makeFilter({ status: 'archived' });
     render(<Preview filter={filter} />);
     const submenu = await openSubmenu(/^Filtres/);
-    expect(within(submenu).queryByText('Statut de la session')).toBeNull();
+    expect(within(submenu).queryByText('Statut de la tâche')).toBeNull();
     expect(
       within(submenu).getByRole('menuitem', { name: 'Réinitialiser les filtres' }).getAttribute('data-disabled'),
     ).not.toBeNull();
-    const harness = await openSubmenu(/^Harnais/);
+    const harness = await openSubmenu(/^Harness/);
     expect(
       within(harness)
         .getAllByRole('menuitem')
@@ -192,13 +192,13 @@ describe('sidebar display settings menu', () => {
     const filter = makeFilter({ groupBy: 'flat' });
     render(<Preview filter={filter} remote={false} />);
     expect(screen.queryByRole('menuitem', { name: /^Tri des projets/ })).toBeNull();
-    expect(screen.getByRole('menuitem', { name: /^Regrouper par/ }).textContent).toBe('Regrouper parDiscuter');
+    expect(screen.getByRole('menuitem', { name: /^Regrouper par/ }).textContent).toBe('Regrouper parDiscussion');
     const group = await openSubmenu(/^Regrouper par/);
     expect(
       within(group)
         .getAllByRole('menuitem')
         .map((row) => row.textContent),
-    ).toEqual(['Projet', 'Discuter']);
+    ).toEqual(['Projet', 'Conversation']);
     expect(filter.groupDevice).toBe(true);
   });
 });
@@ -217,6 +217,6 @@ it('keeps the creator submenu open for multiple selections and exposes an all re
   expect(screen.getAllByRole('menu')).toHaveLength(3);
   fireEvent.click(within(submenu).getByRole('menuitem', { name: 'Tout' }));
   expect(filter.setCreatorsAll).toHaveBeenCalledOnce();
-  fireEvent.click(within(submenu).getByRole('menuitem', { name: 'Tout cacher' }));
+  fireEvent.click(within(submenu).getByRole('menuitem', { name: 'Tout masquer' }));
   expect(filter.setCreatorsNone).toHaveBeenCalledOnce();
 });

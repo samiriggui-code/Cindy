@@ -19,11 +19,11 @@ describe('review follow-up text', () => {
       artifactCount: 2,
       focus: '  检查\n删除流程  ',
     })).toBe([
-      'Examen indépendant (lecture seule, pas de mémoire de développement)',
-      'Répertoire : /work/client · par rapport à origin/main · inclut les modifications non validées',
+      'Revue indépendante (lecture seule, sans mémoire de développement)',
+      'Répertoire : /work/client · par rapport à origin/main · inclut les modifications non commitées',
       'Aussi : /work/server',
       'Artefacts : 2',
-      'Mise au point : 检查 删除流程',
+      "Point d'attention : 检查 删除流程",
     ].join('\n'));
   });
 

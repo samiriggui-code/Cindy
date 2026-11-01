@@ -64,7 +64,7 @@ describe('Cindy Make version summary', () => {
   it('describes the personal version in plain words without hashes or branches', async () => {
     const { container } = await show({ changes: 3 });
     expect(screen.getByText('v0.9.3 officiel + 3 de vos modifications')).toBeTruthy();
-    expect(screen.getByText('Relâchez v0.9.3')).toBeTruthy();
+    expect(screen.getByText('Version stable v0.9.3')).toBeTruthy();
     expect(screen.getByRole('status').textContent).toBe('Inclus dans votre version personnelle');
     expect(screen.getByRole('status').className).toContain('--status-success');
     const text = container.textContent ?? '';
@@ -77,7 +77,7 @@ describe('Cindy Make version summary', () => {
       source: { mainCommit: 'b'.repeat(40), personalAhead: 2, personalBehind: 0 },
       latestVersion: { ...latest, ref: 'v0.9.4', ahead: 0, behind: 5 },
     });
-    expect(screen.getByText('Relâchez v0.9.4')).toBeTruthy();
+    expect(screen.getByText('Version stable v0.9.4')).toBeTruthy();
     expect(screen.getByRole('status').textContent).toBe('Pas encore dans votre version personnelle');
     expect(screen.getByRole('status').className).toContain('--upgrade-banner-fg');
   });
@@ -94,8 +94,8 @@ describe('Cindy Make version summary', () => {
 
   it('never claims the version is included when the lookup failed', async () => {
     await show({ latestVersion: { status: 'unavailable', channel: 'release' } });
-    expect(screen.getByText('Je ne peux pas vérifier pour le moment')).toBeTruthy();
-    expect(screen.getByRole('status').textContent).toBe("Je ne peux pas confirmer si votre version personnelle l'inclut");
+    expect(screen.getByText('Vérification impossible pour le moment')).toBeTruthy();
+    expect(screen.getByRole('status').textContent).toBe("Impossible de confirmer si votre version personnelle l'inclut");
     expect(screen.getByRole('status').className).not.toContain('--status-success');
   });
 
